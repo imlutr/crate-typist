@@ -1,0 +1,89 @@
+[
+  {
+    "name": "map1",
+    "numOfSpawns": "2",
+    "turret": {
+      "x": 284,
+      "y": 284
+    },
+    "spawns": [
+      {
+        "name": "0",
+        "x": -1,
+        "y": 8,
+        "path": [
+          {
+            "x": 8,
+            "y": 8,
+            "distance": 9
+          },
+          {
+            "x": 8,
+            "y": 2,
+            "distance": 6
+          },
+          {
+            "x": 2,
+            "y": 2,
+            "distance": 6
+          },
+          {
+            "x": 2,
+            "y": 6,
+            "distance": 4
+          },
+          {
+            "x": 6,
+            "y": 6,
+            "distance": 4
+          },
+          {
+            "x": 6,
+            "y": 4,
+            "distance": 2
+          }
+        ]
+      },
+      {
+        "name": "1",
+        "x": 11,
+        "y": 1,
+        "path": [
+          {
+            "x": 1,
+            "y": 1,
+            "distance": 9
+          },
+          {
+            "x": 1,
+            "y": 7,
+            "distance": 6
+          },
+          {
+            "x": 7,
+            "y": 7,
+            "distance": 6
+          },
+          {
+            "x": 7,
+            "y": 3,
+            "distance": 4
+          },
+          {
+            "x": 3,
+            "y": 3,
+            "distance": 4
+          },
+          {
+            "x": 3,
+            "y": 5,
+            "distance": 2
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "map2"
+  }
+]

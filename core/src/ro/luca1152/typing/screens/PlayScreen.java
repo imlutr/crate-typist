@@ -5,56 +5,58 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
+import com.badlogic.gdx.utils.JsonReader;
+import com.badlogic.gdx.utils.JsonValue;
 
 import ro.luca1152.typing.TypingGame;
 import ro.luca1152.typing.actors.Crate;
 import ro.luca1152.typing.actors.GameMap;
 
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.after;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
+
 public class PlayScreen extends ScreenAdapter {
     private TypingGame game;
     private Stage stage;
-    private GameMap currentMap;
 
-    public PlayScreen(TypingGame game) {
+    // Map
+    private JsonValue mapsJson; // the file "maps/maps.json"
+    private GameMap map;
+
+    private float crateTimer = 0f;
+
+
+    PlayScreen(TypingGame game) {
         this.game = game;
-        stage = new Stage(game.viewport, game.batch);
+        stage = new Stage(game.getViewport(), game.getBatch());
 
-        // Map
-        currentMap = new GameMap("map1");
-        stage.addActor(currentMap);
+        map = new GameMap(game, 0);
+        stage.addActor(map);
+        JsonReader jsonReader = new JsonReader();
+        mapsJson = jsonReader.parse(Gdx.files.internal("maps/maps.json"));
 
-        // Crates
-        Crate leftCrate = new Crate(-1, 8, true);
-        leftCrate.addAction(sequence(
-                delay(2f),
-                moveBy(576f, 0f, 4.5f),
-                moveBy(0f, -384f, 3f)));
-        stage.addActor(leftCrate);
-        Crate rightCrate = new Crate(10, 1, true);
-        rightCrate.addAction(sequence(
-                delay(2f),
-                moveBy(-576f, 0f, 4.5f),
-                moveBy(0f, 384f, 3f)));
-        stage.addActor(rightCrate);
+        setInputProcessor();
+    }
 
+    private void setInputProcessor() {
         Gdx.input.setInputProcessor(new InputAdapter() {
             @Override
             public boolean keyDown(int keycode) {
                 if (keycode == Keys.A || keycode == Keys.LEFT)
-                    currentMap.turret.rotatingLeft = true;
+                    map.getTurret().rotatingLeft = true;
                 if (keycode == Keys.D || keycode == Keys.RIGHT)
-                    currentMap.turret.rotatingRight = true;
+                    map.getTurret().rotatingRight = true;
                 return true;
             }
 
             @Override
             public boolean keyUp(int keycode) {
                 if (keycode == Keys.A || keycode == Keys.LEFT)
-                    currentMap.turret.rotatingLeft = false;
+                    map.getTurret().rotatingLeft = false;
                 if (keycode == Keys.D || keycode == Keys.RIGHT)
-                    currentMap.turret.rotatingRight = false;
+                    map.getTurret().rotatingRight = false;
                 return true;
             }
         });
@@ -70,6 +72,22 @@ public class PlayScreen extends ScreenAdapter {
 
     private void update(float delta) {
         stage.act(delta);
+        spawnCrates(delta);
+    }
+
+    private void spawnCrates(float delta) {
+        crateTimer -= delta;
+        if (crateTimer <= 0f) {
+            crateTimer = 5f;
+            int randomSpawn = MathUtils.random(0, mapsJson.get(map.getId()).getInt("numOfSpawns") - 1);
+            JsonValue spawn = mapsJson.get(map.getId()).get("spawns").get(randomSpawn);
+            JsonValue path = spawn.get("path");
+
+            Crate crate = new Crate(game, spawn.getInt("x"), spawn.getInt("y"), true);
+            for (JsonValue value : path)
+                crate.addAction(after(moveTo(value.getInt("x") * 64, value.getInt("y") * 64, value.getInt("distance") / 2f)));
+            stage.addActor(crate);
+        }
     }
 
     @Override
