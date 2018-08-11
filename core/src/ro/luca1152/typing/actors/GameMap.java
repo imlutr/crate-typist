@@ -4,12 +4,16 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
-public class GameMap extends Image {
-    public Turret turret;
+import ro.luca1152.typing.TypingGame;
 
-    public GameMap(String mapName) {
-        super(new Texture("maps/" + mapName + ".png"));
-        turret = new Turret(275f, 275f);
+public class GameMap extends Image {
+    private int mapId;
+    private Turret turret;
+
+    public GameMap(TypingGame game, int mapId) {
+        super(game.getManager().get("maps/map" + mapId + ".png", Texture.class));
+        this.mapId = mapId;
+        turret = new Turret(game, 284f, 284f);
     }
 
     @Override
@@ -17,5 +21,13 @@ public class GameMap extends Image {
         super.setStage(stage);
         if (stage != null)
             getStage().addActor(turret);
+    }
+
+    public Turret getTurret() {
+        return turret;
+    }
+
+    public int getId() {
+        return mapId;
     }
 }
