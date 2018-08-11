@@ -2,9 +2,12 @@ package ro.luca1152.typing;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -19,6 +22,7 @@ public class TypingGame extends Game {
     private Batch batch;
     private Viewport viewport;
     private AssetManager assetManager;
+    private Label.LabelStyle labelStyle;
 
     @Override
     public void create() {
@@ -39,5 +43,13 @@ public class TypingGame extends Game {
 
     public AssetManager getManager() {
         return assetManager;
+    }
+
+    public Label.LabelStyle getLabelStyle() {
+        return labelStyle;
+    }
+
+    public void setLabelStyle(Label.LabelStyle labelStyle) {
+        this.labelStyle = labelStyle;
     }
 }
