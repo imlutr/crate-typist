@@ -9,7 +9,9 @@ import ro.luca1152.typing.TypingGame;
 public class HtmlLauncher extends GwtApplication {
     @Override
     public GwtApplicationConfiguration getConfig() {
-        return new GwtApplicationConfiguration(600, 600);
+        GwtApplicationConfiguration config = new GwtApplicationConfiguration(640, 640);
+        config.antialiasing = true;
+        return config;
     }
 
     @Override
