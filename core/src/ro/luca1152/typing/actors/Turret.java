@@ -1,17 +1,24 @@
 package ro.luca1152.typing.actors;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
 import ro.luca1152.typing.TypingGame;
 
+@SuppressWarnings("FieldCanBeLocal")
 public class Turret extends Image {
+    // Constants
+    private final float ORIGIN_X = 36f;
+    private final float ORIGIN_Y = 36f;
+
+    // Booleans
     public boolean rotatingLeft = false;
     public boolean rotatingRight = false;
 
-    Turret(float x, float y) {
-        super(TypingGame.turretTexture);
+    Turret(TypingGame game, float x, float y) {
+        super(game.getManager().get("textures/turret.png", Texture.class));
         setPosition(x, y);
-        setOrigin(45f, 45f);
+        setOrigin(ORIGIN_X, ORIGIN_Y);
     }
 
     @Override
