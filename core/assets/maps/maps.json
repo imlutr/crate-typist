@@ -1,11 +1,23 @@
 [
   {
     "name": "map1",
-    "numOfSpawns": "2",
+
     "turret": {
       "x": 284,
       "y": 284
     },
+    "numOfFinishPoints": 2,
+    "finishPoints": [
+      {
+        "x": 3,
+        "y": 5
+      },
+      {
+        "x": 6,
+        "y": 4
+      }
+    ],
+    "numOfSpawns": "2",
     "spawns": [
       {
         "name": "0",

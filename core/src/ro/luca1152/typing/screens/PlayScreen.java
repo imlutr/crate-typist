@@ -6,6 +6,7 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
@@ -78,12 +79,27 @@ public class PlayScreen extends ScreenAdapter {
     private void spawnCrates(float delta) {
         crateTimer -= delta;
         if (crateTimer <= 0f) {
-            crateTimer = 5f;
+            // Restart the timer
+            crateTimer = 2.5f;
+
+            // Read the spawn and path
+            JsonValue currentMap = mapsJson.get(map.getId());
             int randomSpawn = MathUtils.random(0, mapsJson.get(map.getId()).getInt("numOfSpawns") - 1);
-            JsonValue spawn = mapsJson.get(map.getId()).get("spawns").get(randomSpawn);
+            JsonValue spawn = currentMap.get("spawns").get(randomSpawn);
             JsonValue path = spawn.get("path");
 
-            Crate crate = new Crate(game, spawn.getInt("x"), spawn.getInt("y"), true);
+            // Read finish point(s)
+            int numOfFinishPoints = currentMap.getInt("numOfFinishPoints");
+            Vector2[] finishPoints = new Vector2[numOfFinishPoints];
+            for (int i = 0; i < numOfFinishPoints; i++) {
+                JsonValue arrayOfPoints = currentMap.get("finishPoints");
+                if (numOfFinishPoints == 1)
+                    finishPoints[i] = new Vector2(arrayOfPoints.getInt("x"), arrayOfPoints.getInt("y"));
+                else
+                    finishPoints[i] = new Vector2(arrayOfPoints.get(i).getInt("x"), arrayOfPoints.get(i).getInt("y"));
+            }
+
+            Crate crate = new Crate(game, spawn.getInt("x"), spawn.getInt("y"), true, finishPoints);
             for (JsonValue value : path)
                 crate.addAction(after(moveTo(value.getInt("x") * 64, value.getInt("y") * 64, value.getInt("distance") / 2f)));
             stage.addActor(crate);
