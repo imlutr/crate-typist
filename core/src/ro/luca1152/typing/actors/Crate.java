@@ -65,8 +65,10 @@ public class Crate extends Group {
             crateImage = new Image(game.getManager().get("textures/wooden_crate.png", Texture.class));
         else if (word.length() <= 5)
             crateImage = new Image(game.getManager().get("textures/golden_crate.png", Texture.class));
-        else
+        else if (word.length() <= 7)
             crateImage = new Image(game.getManager().get("textures/diamond_crate.png", Texture.class));
+        else //if (word.length() <= 9)
+            crateImage = new Image(game.getManager().get("textures/amethyst_crate.png", Texture.class));
         crateImage.setPosition(getX(), getY());
         addActor(crateImage);
     }

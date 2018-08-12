@@ -34,6 +34,7 @@ public class LoadingScreen extends ScreenAdapter {
         game.getManager().load("textures/wooden_crate.png", Texture.class);
         game.getManager().load("textures/golden_crate.png", Texture.class);
         game.getManager().load("textures/diamond_crate.png", Texture.class);
+        game.getManager().load("textures/amethyst_crate.png", Texture.class);
         game.getManager().load("textures/turret.png", Texture.class);
         game.getManager().load("textures/bullet.png", Texture.class);
         game.getManager().load("maps/map0.png", Texture.class);
@@ -47,6 +48,7 @@ public class LoadingScreen extends ScreenAdapter {
             game.getManager().get("textures/wooden_crate.png", Texture.class).setFilter(TextureFilter.Linear, TextureFilter.Linear);
             game.getManager().get("textures/golden_crate.png", Texture.class).setFilter(TextureFilter.Linear, TextureFilter.Linear);
             game.getManager().get("textures/diamond_crate.png", Texture.class).setFilter(TextureFilter.Linear, TextureFilter.Linear);
+            game.getManager().get("textures/amethyst_crate.png", Texture.class).setFilter(TextureFilter.Linear, TextureFilter.Linear);
             game.getManager().get("textures/turret.png", Texture.class).setFilter(TextureFilter.Linear, TextureFilter.Linear);
             game.getManager().get("textures/bullet.png", Texture.class).setFilter(TextureFilter.Linear, TextureFilter.Linear);
             game.getManager().get("maps/map0.png", Texture.class).setFilter(TextureFilter.Linear, TextureFilter.Linear);
