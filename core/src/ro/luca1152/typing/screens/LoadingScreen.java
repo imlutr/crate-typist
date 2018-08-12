@@ -32,6 +32,7 @@ public class LoadingScreen extends ScreenAdapter {
     private void loadAssets() {
         Gdx.app.log(LoadingScreen.class.getSimpleName(), "Started loading assets.");
         game.getManager().load("textures/wooden_crate.png", Texture.class);
+        game.getManager().load("textures/copper_crate.png", Texture.class);
         game.getManager().load("textures/golden_crate.png", Texture.class);
         game.getManager().load("textures/diamond_crate.png", Texture.class);
         game.getManager().load("textures/amethyst_crate.png", Texture.class);
@@ -46,6 +47,7 @@ public class LoadingScreen extends ScreenAdapter {
         timer += delta;
         if (game.getManager().update()) {
             game.getManager().get("textures/wooden_crate.png", Texture.class).setFilter(TextureFilter.Linear, TextureFilter.Linear);
+            game.getManager().get("textures/copper_crate.png", Texture.class).setFilter(TextureFilter.Linear, TextureFilter.Linear);
             game.getManager().get("textures/golden_crate.png", Texture.class).setFilter(TextureFilter.Linear, TextureFilter.Linear);
             game.getManager().get("textures/diamond_crate.png", Texture.class).setFilter(TextureFilter.Linear, TextureFilter.Linear);
             game.getManager().get("textures/amethyst_crate.png", Texture.class).setFilter(TextureFilter.Linear, TextureFilter.Linear);
