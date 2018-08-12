@@ -88,7 +88,7 @@ public class GameMap extends Group {
         for (Actor crate : crates.getChildren()) {
             for (Vector2 finishPoint : finishPoints) {
                 if (crate.getX() == finishPoint.x * 64 && crate.getY() == finishPoint.y * 64) {
-                    ((Crate) crate).removeCrate();
+                    ((Crate) crate).removeCrate(true);
                 }
             }
         }

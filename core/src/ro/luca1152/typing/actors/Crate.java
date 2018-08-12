@@ -29,7 +29,6 @@ public class Crate extends Group {
             new Vector2(2242, 2254), // 13 letters
             new Vector2(2255, 2260) // 14 letters
     };
-
     private ArrayList<String> allCratesWords;
     private String[] wordList;
 
@@ -37,6 +36,8 @@ public class Crate extends Group {
     private Image crateImage;
     private String initialWord;
     private String word;
+
+    private boolean reachedFinish = false;
 
     Crate(TypingGame game, ArrayList<String> allCratesWords, float mapX, float mapY) {
         this.game = game;
@@ -63,7 +64,6 @@ public class Crate extends Group {
         }
         initialWord = word;
         allCratesWords.add(initialWord);
-        System.out.println(allCratesWords.size());
     }
 
     private void getRandomWord() {
@@ -91,14 +91,15 @@ public class Crate extends Group {
         crateImage.setPosition(getX(), getY());
         label.setPosition(getX() + getWidth() / 2f - label.getPrefWidth() / 2f, getY() + 70);
         if (wordIsEmpty())
-            removeCrate();
+            removeCrate(false);
     }
 
     public boolean wordIsEmpty() {
         return firstCharFromWord() == ' ';
     }
 
-    public void removeCrate() {
+    public void removeCrate(boolean reachedFinish) {
+        this.reachedFinish = reachedFinish;
         remove();
         allCratesWords.remove(initialWord);
     }
@@ -132,5 +133,9 @@ public class Crate extends Group {
 
     public Image getCrateImage() {
         return crateImage;
+    }
+
+    public boolean isReachedFinish() {
+        return reachedFinish;
     }
 }

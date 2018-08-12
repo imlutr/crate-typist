@@ -14,10 +14,9 @@ import ro.luca1152.typing.actors.GameMap;
 
 public class PlayScreen extends ScreenAdapter {
     private Stage stage;
-
     private static GameMap map;
-
     private Crate selectedCrate = null;
+    private float delay = 0f;
 
     PlayScreen(TypingGame game) {
         stage = new Stage(game.getViewport(), game.getBatch());
@@ -32,24 +31,35 @@ public class PlayScreen extends ScreenAdapter {
         Gdx.input.setInputProcessor(new InputAdapter() {
             @Override
             public boolean keyDown(int keycode) {
-                if (keycode >= Keys.A && keycode <= Keys.Z) {
+                if (keycode >= Keys.A && keycode <= Keys.Z && delay <= 0f) {
                     if (selectedCrate == null) {
                         for (Actor child : PlayScreen.map.getCrates().getChildren()) {
                             Crate crate = ((Crate) child);
                             if (crate.firstCharFromWord() == keycodeToChar(keycode)) {
                                 selectedCrate = crate;
                                 crate.keyPressed(keycodeToString(keycode));
-                                if (selectedCrate.wordIsEmpty())
+                                if (selectedCrate.wordIsEmpty() || selectedCrate.isReachedFinish())
                                     selectedCrate = null;
                                 return true;
                             }
                         }
                     } else {
+                        // The word is in progress
                         if (selectedCrate.firstCharFromWord() == keycodeToChar(keycode)) {
                             selectedCrate.keyPressed(keycodeToString(keycode));
                         }
-                        if (selectedCrate.wordIsEmpty())
+
+                        // Finished the word
+                        if (selectedCrate.wordIsEmpty()) {
                             selectedCrate = null;
+                        }
+
+                        // While typing, the box reached the finish point.
+                        // May result in unexpected key presses, hence the delay.
+                        else if (!selectedCrate.wordIsEmpty() && selectedCrate.isReachedFinish()){
+                            delay = .2f;
+                            selectedCrate = null;
+                        }
                     }
                 }
                 return false;
@@ -78,6 +88,7 @@ public class PlayScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta) {
+        delay -= delta;
         stage.act(delta);
         Gdx.gl20.glClearColor(1f, 1f, 1f, 1f);
         Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
