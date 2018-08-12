@@ -15,7 +15,7 @@ import ro.luca1152.typing.actors.GameMap;
 public class PlayScreen extends ScreenAdapter {
     private Stage stage;
     private static GameMap map;
-    private Crate selectedCrate = null;
+    private Crate targetCrate = null;
     private float delay = 0f;
 
     PlayScreen(TypingGame game) {
@@ -32,35 +32,40 @@ public class PlayScreen extends ScreenAdapter {
             @Override
             public boolean keyDown(int keycode) {
                 if (keycode >= Keys.A && keycode <= Keys.Z && delay <= 0f) {
-                    if (selectedCrate == null) {
+                    if (targetCrate == null) {
                         for (Actor child : PlayScreen.map.getCrates().getChildren()) {
                             Crate crate = ((Crate) child);
                             if (crate.firstCharFromWord() == keycodeToChar(keycode)) {
-                                selectedCrate = crate;
+                                targetCrate = crate;
                                 crate.keyPressed(keycodeToString(keycode));
-                                if (selectedCrate.wordIsEmpty() || selectedCrate.isReachedFinish())
-                                    selectedCrate = null;
-                                PlayScreen.map.getTurret().setTargetCrate(selectedCrate);
+                                if (targetCrate.wordIsEmpty() || targetCrate.isReachedFinish()) {
+                                    targetCrate = null;
+                                }
+                                PlayScreen.map.getTurret().setTargetCrate(targetCrate);
+                                PlayScreen.map.getTurret().shoot(targetCrate);
                                 return true;
                             }
                         }
                     } else {
                         // The word is in progress
-                        if (selectedCrate.firstCharFromWord() == keycodeToChar(keycode))
-                            selectedCrate.keyPressed(keycodeToString(keycode));
+                        if (targetCrate.firstCharFromWord() == keycodeToChar(keycode))
+                        {
+                            targetCrate.keyPressed(keycodeToString(keycode));
+                            PlayScreen.map.getTurret().shoot(targetCrate);
+                        }
 
                         // Finished the word
-                        if (selectedCrate.wordIsEmpty()) {
-                            selectedCrate = null;
-                            PlayScreen.map.getTurret().setTargetCrate(selectedCrate);
+                        if (targetCrate.wordIsEmpty()) {
+                            targetCrate = null;
+                            PlayScreen.map.getTurret().setTargetCrate(targetCrate);
                         }
 
                         // While typing, the box reached the finish point.
                         // May result in unexpected key presses, hence the delay.
-                        else if (!selectedCrate.wordIsEmpty() && selectedCrate.isReachedFinish()){
+                        else if (!targetCrate.wordIsEmpty() && targetCrate.isReachedFinish()){
                             delay = .2f;
-                            selectedCrate = null;
-                            PlayScreen.map.getTurret().setTargetCrate(selectedCrate);
+                            targetCrate = null;
+                            PlayScreen.map.getTurret().setTargetCrate(targetCrate);
                         }
                     }
                 }
