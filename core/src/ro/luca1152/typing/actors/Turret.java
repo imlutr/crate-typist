@@ -7,7 +7,6 @@ import ro.luca1152.typing.TypingGame;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class Turret extends Image {
-    // Booleans
     public boolean rotatingLeft = false;
     public boolean rotatingRight = false;
 
