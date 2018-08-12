@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.utils.Align;
 
 import java.util.ArrayList;
 
@@ -62,8 +63,10 @@ public class Crate extends Group {
     private void addCrateImage() {
         if (word.length() <= 3)
             crateImage = new Image(game.getManager().get("textures/wooden_crate.png", Texture.class));
-        else
+        else if (word.length() <= 5)
             crateImage = new Image(game.getManager().get("textures/golden_crate.png", Texture.class));
+        else
+            crateImage = new Image(game.getManager().get("textures/diamond_crate.png", Texture.class));
         crateImage.setPosition(getX(), getY());
         addActor(crateImage);
     }
@@ -71,6 +74,8 @@ public class Crate extends Group {
     private void addLabel() {
         label = new BackgroundLabel(word, game.getLabelStyle());
         label.setPosition(getX(), getY() + 70);
+        label.setSize(label.getWidth() + 4, label.getHeight() + 4);
+        label.setAlignment(Align.center, Align.center);
         addActor(label);
     }
 
