@@ -1,5 +1,6 @@
 package ro.luca1152.typing.screens;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -11,7 +12,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import ro.luca1152.typing.TypingGame;
 
 public class LoadingScreen extends ScreenAdapter {
-    private TypingGame game;
+    private final TypingGame game;
+    private float timer; // How much loading the assets takes
 
     public LoadingScreen(TypingGame game) {
         this.game = game;
@@ -19,7 +21,7 @@ public class LoadingScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta) {
-        update();
+        update(delta);
     }
 
     @Override
@@ -28,24 +30,25 @@ public class LoadingScreen extends ScreenAdapter {
     }
 
     private void loadAssets() {
+        Gdx.app.log(LoadingScreen.class.getSimpleName(), "Started loading assets.");
         game.getManager().load("textures/wooden_crate.png", Texture.class);
         game.getManager().load("textures/golden_crate.png", Texture.class);
         game.getManager().load("textures/turret.png", Texture.class);
-        game.getManager().load("textures/pixel.png", Texture.class);
         game.getManager().load("maps/map0.png", Texture.class);
         game.getManager().load("fonts/pt_mono.fnt", BitmapFont.class);
     }
 
-    private void update() {
+    private void update(float delta) {
+        timer += delta;
         if (game.getManager().update()) {
             game.getManager().get("textures/wooden_crate.png", Texture.class).setFilter(TextureFilter.Linear, TextureFilter.Linear);
             game.getManager().get("textures/golden_crate.png", Texture.class).setFilter(TextureFilter.Linear, TextureFilter.Linear);
             game.getManager().get("textures/turret.png", Texture.class).setFilter(TextureFilter.Linear, TextureFilter.Linear);
             game.getManager().get("maps/map0.png", Texture.class).setFilter(TextureFilter.Linear, TextureFilter.Linear);
             game.setLabelStyle(new Label.LabelStyle(game.getManager().get("fonts/pt_mono.fnt", BitmapFont.class), Color.WHITE));
-            Image background = new Image(game.getManager().get("textures/pixel.png", Texture.class));
-            background.setColor(0f, 0f, 0f, .3f);
-            game.getLabelStyle().background = background.getDrawable();
+
+            timer = (int)(timer*1000) / 1000f; // Get only 3 decimal places
+            Gdx.app.log(LoadingScreen.class.getSimpleName(), "Finished loading assets in " + timer + "s.");
 
             game.setScreen(new PlayScreen(game));
         }
