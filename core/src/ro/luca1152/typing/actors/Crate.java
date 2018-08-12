@@ -2,27 +2,46 @@ package ro.luca1152.typing.actors;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+
+import java.util.ArrayList;
 
 import ro.luca1152.typing.TypingGame;
 
 public class Crate extends Group {
     private final TypingGame game;
-    private final String words[] = {
-            "if", "ad", "by",
-            "for", "max", "mix",
-            "pair", "gift", "jump",
-            "white", "alien", "board",
-            "smooth", "strong", "barrel",
-            "skateboard"};
+    private final Vector2[] LENGTH_RANGE = new Vector2[] {
+            new Vector2(), // 0 letters
+            new Vector2(), // 1 letter
+            new Vector2(0, 25), // 2 letters
+            new Vector2(26, 182), // 3 letters
+            new Vector2(183, 613), // 4 letters
+            new Vector2(614, 1027), // 5 letters
+            new Vector2(1028, 1399), // 6 letters
+            new Vector2(1400, 1705), // 7 letters
+            new Vector2(1706, 1908), // 8 letters
+            new Vector2(1909, 2054), // 9 letters
+            new Vector2(2055, 2161), // 10 letters
+            new Vector2(2162, 2221), // 11 letters
+            new Vector2(2222, 2241), // 12 letters
+            new Vector2(2242, 2254), // 13 letters
+            new Vector2(2255, 2260) // 14 letters
+    };
+
+    private ArrayList<String> allCratesWords;
+    private String[] wordList;
 
     private BackgroundLabel label;
     private Image crateImage;
+    private String initialWord;
     private String word;
 
-    Crate(TypingGame game, float mapX, float mapY) {
+    Crate(TypingGame game, ArrayList<String> allCratesWords, float mapX, float mapY) {
         this.game = game;
+        this.allCratesWords = allCratesWords;
+        this.wordList = game.getWordList();
         setPosition(mapX * 64, mapY * 64);
         setSize(64, 64);
         getRandomWord();
@@ -30,8 +49,25 @@ public class Crate extends Group {
         addLabel();
     }
 
+    private void getRandomWord(int length) {
+        // Has to have the first letter different to all the other crates' word
+        while (true) {
+            word = wordList[MathUtils.random(0, wordList.length - 1)];
+            int numSameFirstLetter = 0;
+            for (int i = 0; i < allCratesWords.size(); i++) {
+                if (allCratesWords.get(i).charAt(0) == word.charAt(0))
+                    numSameFirstLetter++;
+            }
+            if (numSameFirstLetter == 0)
+                    break;
+        }
+        initialWord = word;
+        allCratesWords.add(initialWord);
+        System.out.println(allCratesWords.size());
+    }
+
     private void getRandomWord() {
-        word = words[MathUtils.random(0, words.length - 1)];
+        getRandomWord(MathUtils.random(2, 14));
     }
 
     private void addCrateImage() {
@@ -54,6 +90,40 @@ public class Crate extends Group {
         super.act(delta);
         crateImage.setPosition(getX(), getY());
         label.setPosition(getX() + getWidth() / 2f - label.getPrefWidth() / 2f, getY() + 70);
+        if (wordIsEmpty())
+            removeCrate();
+    }
+
+    public boolean wordIsEmpty() {
+        return firstCharFromWord() == ' ';
+    }
+
+    public void removeCrate() {
+        remove();
+        allCratesWords.remove(initialWord);
+    }
+
+    public char firstCharFromWord() {
+        for (int i = 0; i < word.length(); i++) {
+            if (word.charAt(i) == '[') {
+                while (word.charAt(i - 1) != ']') {
+                    if (i == word.length() - 1)
+                        return ' ';
+                    i++;
+                }
+            }
+            if (word.charAt(i) != ' ')
+                return word.charAt(i);
+        }
+        return ' ';
+    }
+
+    public void keyPressed(String key) {
+        if (!key.contains("[ORANGE]"))
+            word = word.replaceFirst(key, " [ORANGE]");
+        else
+            word = word.replaceFirst(key, " ");
+        label.setText(word);
     }
 
     public BackgroundLabel getLabel() {

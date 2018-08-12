@@ -11,6 +11,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 
+import java.util.ArrayList;
+
 import ro.luca1152.typing.TypingGame;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.after;
@@ -20,6 +22,7 @@ public class GameMap extends Group {
     private final TypingGame game;
 
     // Map
+    private ArrayList<String> allWords = new ArrayList<String>();
     private JsonValue currentMap;
     private Vector2[] finishPoints;
     private int id;
@@ -82,11 +85,10 @@ public class GameMap extends Group {
     }
 
     private void removeCratesAtFinishPoint() {
-        for (Actor crate: crates.getChildren()) {
+        for (Actor crate : crates.getChildren()) {
             for (Vector2 finishPoint : finishPoints) {
                 if (crate.getX() == finishPoint.x * 64 && crate.getY() == finishPoint.y * 64) {
-                    removeActor(crate);
-                    crate.remove();
+                    ((Crate) crate).removeCrate();
                 }
             }
         }
@@ -94,7 +96,7 @@ public class GameMap extends Group {
 
     private Crate newCrate(JsonValue currentMap, int randomSpawn) {
         JsonValue spawn = currentMap.get("spawns").get(randomSpawn);
-        return new Crate(game, spawn.getInt("x"), spawn.getInt("y"));
+        return new Crate(game, allWords, spawn.getInt("x"), spawn.getInt("y"));
     }
 
     private void addMovementActionsTo(Crate crate, int randomSpawn, JsonValue currentMap) {
@@ -107,13 +109,17 @@ public class GameMap extends Group {
     public void draw(Batch batch, float parentAlpha) {
         mapImage.draw(batch, parentAlpha);
         turret.draw(batch, parentAlpha);
-        for (Actor child: crates.getChildren())
-            ((Crate)child).getCrateImage().draw(batch, parentAlpha);
-        for (Actor child: crates.getChildren())
-            ((Crate)child).getLabel().draw(batch, parentAlpha);
+        for (Actor child : crates.getChildren())
+            ((Crate) child).getCrateImage().draw(batch, parentAlpha);
+        for (Actor child : crates.getChildren())
+            ((Crate) child).getLabel().draw(batch, parentAlpha);
     }
 
     public Turret getTurret() {
         return turret;
+    }
+
+    public Group getCrates() {
+        return crates;
     }
 }
