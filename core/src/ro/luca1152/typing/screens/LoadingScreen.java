@@ -13,7 +13,7 @@ import ro.luca1152.typing.TypingGame;
 
 public class LoadingScreen extends ScreenAdapter {
     private final TypingGame game;
-    private float timer; // How much loading the assets takes
+    private float timer; // How much time loading the assets takes
 
     public LoadingScreen(TypingGame game) {
         this.game = game;
@@ -34,6 +34,7 @@ public class LoadingScreen extends ScreenAdapter {
         game.getManager().load("textures/wooden_crate.png", Texture.class);
         game.getManager().load("textures/golden_crate.png", Texture.class);
         game.getManager().load("textures/turret.png", Texture.class);
+        game.getManager().load("textures/bullet.png", Texture.class);
         game.getManager().load("maps/map0.png", Texture.class);
         game.getManager().load("fonts/pt_mono.fnt", BitmapFont.class);
         game.setWordList(Gdx.files.internal("words").readString().split("\\s+"));
@@ -45,6 +46,7 @@ public class LoadingScreen extends ScreenAdapter {
             game.getManager().get("textures/wooden_crate.png", Texture.class).setFilter(TextureFilter.Linear, TextureFilter.Linear);
             game.getManager().get("textures/golden_crate.png", Texture.class).setFilter(TextureFilter.Linear, TextureFilter.Linear);
             game.getManager().get("textures/turret.png", Texture.class).setFilter(TextureFilter.Linear, TextureFilter.Linear);
+            game.getManager().get("textures/bullet.png", Texture.class).setFilter(TextureFilter.Linear, TextureFilter.Linear);
             game.getManager().get("maps/map0.png", Texture.class).setFilter(TextureFilter.Linear, TextureFilter.Linear);
             game.getManager().get("fonts/pt_mono.fnt", BitmapFont.class).getData().markupEnabled = true;
             game.setLabelStyle(new Label.LabelStyle(game.getManager().get("fonts/pt_mono.fnt", BitmapFont.class), Color.WHITE));
