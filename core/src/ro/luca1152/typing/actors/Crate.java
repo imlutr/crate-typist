@@ -2,6 +2,7 @@ package ro.luca1152.typing.actors;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -12,7 +13,7 @@ import ro.luca1152.typing.TypingGame;
 
 public class Crate extends Group {
     private final TypingGame game;
-    private final Vector2[] LENGTH_RANGE = new Vector2[] {
+    private final Vector2[] LENGTH_RANGE = new Vector2[]{
             new Vector2(), // 0 letters
             new Vector2(), // 1 letter
             new Vector2(0, 25), // 2 letters
@@ -31,6 +32,7 @@ public class Crate extends Group {
     };
     private ArrayList<String> allCratesWords;
     private String[] wordList;
+    private Rectangle collisionBox;
 
     private BackgroundLabel label;
     private Image crateImage;
@@ -43,8 +45,10 @@ public class Crate extends Group {
         this.game = game;
         this.allCratesWords = allCratesWords;
         this.wordList = game.getWordList();
+        this.collisionBox = new Rectangle();
         setPosition(mapX * 64, mapY * 64);
         setSize(64, 64);
+        collisionBox.setSize(getWidth(), getHeight());
         setOrigin(getWidth() / 2f, getHeight() / 2f);
         getRandomWord();
         addCrateImage();
@@ -80,7 +84,7 @@ public class Crate extends Group {
                     numSameFirstLetter++;
             }
             if (numSameFirstLetter == 0)
-                    break;
+                break;
         }
         initialWord = word;
         allCratesWords.add(initialWord);
@@ -121,11 +125,16 @@ public class Crate extends Group {
     }
 
     public void keyPressed(String key) {
-        if (!key.contains("[ORANGE]"))
+        if (!word.contains("[ORANGE]"))
             word = word.replaceFirst(key, " [ORANGE]");
         else
             word = word.replaceFirst(key, " ");
         label.setText(word);
+    }
+
+    public Rectangle getCollisionBox() {
+        collisionBox.setPosition(getX(), getY());
+        return collisionBox;
     }
 
     public BackgroundLabel getLabel() {
