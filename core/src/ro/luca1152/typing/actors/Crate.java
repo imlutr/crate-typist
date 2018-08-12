@@ -45,25 +45,10 @@ public class Crate extends Group {
         this.wordList = game.getWordList();
         setPosition(mapX * 64, mapY * 64);
         setSize(64, 64);
+        setOrigin(getWidth() / 2f, getHeight() / 2f);
         getRandomWord();
         addCrateImage();
         addLabel();
-    }
-
-    private void getRandomWord(int length) {
-        // Has to have the first letter different to all the other crates' word
-        while (true) {
-            word = wordList[MathUtils.random(0, wordList.length - 1)];
-            int numSameFirstLetter = 0;
-            for (int i = 0; i < allCratesWords.size(); i++) {
-                if (allCratesWords.get(i).charAt(0) == word.charAt(0))
-                    numSameFirstLetter++;
-            }
-            if (numSameFirstLetter == 0)
-                    break;
-        }
-        initialWord = word;
-        allCratesWords.add(initialWord);
     }
 
     private void getRandomWord() {
@@ -83,6 +68,22 @@ public class Crate extends Group {
         label = new BackgroundLabel(word, game.getLabelStyle());
         label.setPosition(getX(), getY() + 70);
         addActor(label);
+    }
+
+    private void getRandomWord(int length) {
+        // Has to have the first letter different to all the other crates' word
+        while (true) {
+            word = wordList[MathUtils.random(0, wordList.length - 1)];
+            int numSameFirstLetter = 0;
+            for (int i = 0; i < allCratesWords.size(); i++) {
+                if (allCratesWords.get(i).charAt(0) == word.charAt(0))
+                    numSameFirstLetter++;
+            }
+            if (numSameFirstLetter == 0)
+                    break;
+        }
+        initialWord = word;
+        allCratesWords.add(initialWord);
     }
 
     @Override

@@ -40,18 +40,19 @@ public class PlayScreen extends ScreenAdapter {
                                 crate.keyPressed(keycodeToString(keycode));
                                 if (selectedCrate.wordIsEmpty() || selectedCrate.isReachedFinish())
                                     selectedCrate = null;
+                                PlayScreen.map.getTurret().setTargetCrate(selectedCrate);
                                 return true;
                             }
                         }
                     } else {
                         // The word is in progress
-                        if (selectedCrate.firstCharFromWord() == keycodeToChar(keycode)) {
+                        if (selectedCrate.firstCharFromWord() == keycodeToChar(keycode))
                             selectedCrate.keyPressed(keycodeToString(keycode));
-                        }
 
                         // Finished the word
                         if (selectedCrate.wordIsEmpty()) {
                             selectedCrate = null;
+                            PlayScreen.map.getTurret().setTargetCrate(selectedCrate);
                         }
 
                         // While typing, the box reached the finish point.
@@ -59,6 +60,7 @@ public class PlayScreen extends ScreenAdapter {
                         else if (!selectedCrate.wordIsEmpty() && selectedCrate.isReachedFinish()){
                             delay = .2f;
                             selectedCrate = null;
+                            PlayScreen.map.getTurret().setTargetCrate(selectedCrate);
                         }
                     }
                 }
