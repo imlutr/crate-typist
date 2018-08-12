@@ -79,31 +79,37 @@ public class PlayScreen extends ScreenAdapter {
     private void spawnCrates(float delta) {
         crateTimer -= delta;
         if (crateTimer <= 0f) {
-            // Restart the timer
-            crateTimer = 2.5f;
+            crateTimer = 1.5f;
 
-            // Read the spawn and path
             JsonValue currentMap = mapsJson.get(map.getId());
-            int randomSpawn = MathUtils.random(0, mapsJson.get(map.getId()).getInt("numOfSpawns") - 1);
-            JsonValue spawn = currentMap.get("spawns").get(randomSpawn);
-            JsonValue path = spawn.get("path");
-
-            // Read finish point(s)
-            int numOfFinishPoints = currentMap.getInt("numOfFinishPoints");
-            Vector2[] finishPoints = new Vector2[numOfFinishPoints];
-            for (int i = 0; i < numOfFinishPoints; i++) {
-                JsonValue arrayOfPoints = currentMap.get("finishPoints");
-                if (numOfFinishPoints == 1)
-                    finishPoints[i] = new Vector2(arrayOfPoints.getInt("x"), arrayOfPoints.getInt("y"));
-                else
-                    finishPoints[i] = new Vector2(arrayOfPoints.get(i).getInt("x"), arrayOfPoints.get(i).getInt("y"));
-            }
-
-            Crate crate = new Crate(game, spawn.getInt("x"), spawn.getInt("y"), true, finishPoints);
-            for (JsonValue value : path)
-                crate.addAction(after(moveTo(value.getInt("x") * 64, value.getInt("y") * 64, value.getInt("distance") / 2f)));
-            stage.addActor(crate);
+            int randomSpawn = MathUtils.random(0, currentMap.getInt("numOfSpawns") - 1);
+            addActionsTo(newCrate(currentMap, finishPoints(currentMap), randomSpawn), randomSpawn, currentMap);
         }
+    }
+
+    private Vector2[] finishPoints(JsonValue currentMap) {
+        int numOfFinishPoints = currentMap.getInt("numOfFinishPoints");
+        Vector2[] finishPoints = new Vector2[numOfFinishPoints];
+        for (int i = 0; i < numOfFinishPoints; i++) {
+            JsonValue arrayOfPoints = currentMap.get("finishPoints");
+            if (numOfFinishPoints == 1)
+                finishPoints[i] = new Vector2(arrayOfPoints.getInt("x"), arrayOfPoints.getInt("y"));
+            else
+                finishPoints[i] = new Vector2(arrayOfPoints.get(i).getInt("x"), arrayOfPoints.get(i).getInt("y"));
+        }
+        return finishPoints;
+    }
+
+    private Crate newCrate(JsonValue currentMap, Vector2[] finishPoints, int randomSpawn) {
+        JsonValue spawn = currentMap.get("spawns").get(randomSpawn);
+        return new Crate(game, spawn.getInt("x"), spawn.getInt("y"), true, finishPoints);
+    }
+
+    private void addActionsTo(Crate crate, int randomSpawn, JsonValue currentMap) {
+        JsonValue path = currentMap.get("spawns").get(randomSpawn).get("path");
+        for (JsonValue value : path)
+            crate.addAction(after(moveTo(value.getInt("x") * 64, value.getInt("y") * 64, value.getInt("distance") / 2f)));
+        stage.addActor(crate);
     }
 
     @Override

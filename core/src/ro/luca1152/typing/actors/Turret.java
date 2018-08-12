@@ -7,10 +7,6 @@ import ro.luca1152.typing.TypingGame;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class Turret extends Image {
-    // Constants
-    private final float ORIGIN_X = 36f;
-    private final float ORIGIN_Y = 36f;
-
     // Booleans
     public boolean rotatingLeft = false;
     public boolean rotatingRight = false;
@@ -18,7 +14,7 @@ public class Turret extends Image {
     Turret(TypingGame game, float x, float y) {
         super(game.getManager().get("textures/turret.png", Texture.class));
         setPosition(x, y);
-        setOrigin(ORIGIN_X, ORIGIN_Y);
+        setOrigin(36f, 36f);
     }
 
     @Override

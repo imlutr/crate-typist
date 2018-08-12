@@ -14,6 +14,7 @@ public class GameMap extends Image {
         super(game.getManager().get("maps/map" + mapId + ".png", Texture.class));
         this.mapId = mapId;
         turret = new Turret(game, 284f, 284f);
+        turret.setZIndex(1); // Put the turret under the crates' label
     }
 
     @Override
