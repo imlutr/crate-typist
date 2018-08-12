@@ -23,12 +23,14 @@ public class TypingGame extends Game {
     private Viewport viewport;
     private AssetManager assetManager;
     private Label.LabelStyle labelStyle;
+    private String[] wordList;
 
     @Override
     public void create() {
         batch = new SpriteBatch();
         viewport =  new FitViewport(640f, 640f);
         assetManager = new AssetManager();
+        wordList = new String[2261];
 
         setScreen(new LoadingScreen(this));
     }
@@ -51,5 +53,13 @@ public class TypingGame extends Game {
 
     public void setLabelStyle(Label.LabelStyle labelStyle) {
         this.labelStyle = labelStyle;
+    }
+
+    public String[] getWordList() {
+        return wordList;
+    }
+
+    public void setWordList(String[] wordList) {
+        this.wordList = wordList;
     }
 }

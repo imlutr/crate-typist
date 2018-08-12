@@ -36,6 +36,7 @@ public class LoadingScreen extends ScreenAdapter {
         game.getManager().load("textures/turret.png", Texture.class);
         game.getManager().load("maps/map0.png", Texture.class);
         game.getManager().load("fonts/pt_mono.fnt", BitmapFont.class);
+        game.setWordList(Gdx.files.internal("words").readString().split("\\s+"));
     }
 
     private void update(float delta) {
@@ -45,6 +46,7 @@ public class LoadingScreen extends ScreenAdapter {
             game.getManager().get("textures/golden_crate.png", Texture.class).setFilter(TextureFilter.Linear, TextureFilter.Linear);
             game.getManager().get("textures/turret.png", Texture.class).setFilter(TextureFilter.Linear, TextureFilter.Linear);
             game.getManager().get("maps/map0.png", Texture.class).setFilter(TextureFilter.Linear, TextureFilter.Linear);
+            game.getManager().get("fonts/pt_mono.fnt", BitmapFont.class).getData().markupEnabled = true;
             game.setLabelStyle(new Label.LabelStyle(game.getManager().get("fonts/pt_mono.fnt", BitmapFont.class), Color.WHITE));
 
             timer = (int)(timer*1000) / 1000f; // Get only 3 decimal places
