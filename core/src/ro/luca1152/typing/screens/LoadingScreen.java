@@ -40,6 +40,7 @@ public class LoadingScreen extends ScreenAdapter {
         game.getManager().load("textures/pixel.png", Texture.class);
         game.getManager().load("maps/map0.png", Texture.class);
         game.getManager().load("fonts/pt_mono_17.fnt", BitmapFont.class);
+        game.getManager().load("fonts/pt_mono_23.fnt", BitmapFont.class);
         game.getManager().load("fonts/pt_mono_30.fnt", BitmapFont.class);
         game.setWordList(Gdx.files.internal("words").readString().split("\\s+"));
     }
@@ -57,6 +58,7 @@ public class LoadingScreen extends ScreenAdapter {
             game.getManager().get("maps/map0.png", Texture.class).setFilter(TextureFilter.Linear, TextureFilter.Linear);
             game.getManager().get("fonts/pt_mono_17.fnt", BitmapFont.class).getData().markupEnabled = true;
             game.setLabelStyle17bg(new Label.LabelStyle(game.getManager().get("fonts/pt_mono_17.fnt", BitmapFont.class), Color.WHITE));
+            game.getManager().get("fonts/pt_mono_23.fnt", BitmapFont.class).getData().markupEnabled = true;
             game.getManager().get("fonts/pt_mono_30.fnt", BitmapFont.class).getData().markupEnabled = true;
             game.setLabelStyle30(new Label.LabelStyle(game.getManager().get("fonts/pt_mono_30.fnt", BitmapFont.class), Color.WHITE));
 
