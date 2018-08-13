@@ -44,6 +44,7 @@ public class Crate extends Group {
 
     private boolean reachedFinish = false;
     private boolean labelRemoved = false;
+    private boolean isTargetCrate = false;
 
     Crate(TypingGame game, ArrayList<String> allCratesWords, float mapX, float mapY) {
         this.game = game;
@@ -79,7 +80,7 @@ public class Crate extends Group {
     }
 
     private void addLabel() {
-        label = new BackgroundLabel(word, game.getLabelStyle());
+        label = new BackgroundLabel(word, game.getBackgroundLabelStyle());
         label.setPosition(getX(), getY() + 70);
         label.setSize(label.getWidth() + 4, label.getHeight() + 4);
         label.setAlignment(Align.center, Align.center);
@@ -153,6 +154,10 @@ public class Crate extends Group {
         return collisionBox;
     }
 
+    public void setIsTargetCrate(boolean targetCrate) {
+        isTargetCrate = targetCrate;
+    }
+
     public void removeLabel() {
         labelRemoved = true;
     }
@@ -169,10 +174,6 @@ public class Crate extends Group {
         return crateImage;
     }
 
-    public boolean reachedFinish() {
-        return reachedFinish;
-    }
-
     public void collision() {
         lives--;
     }
@@ -183,5 +184,9 @@ public class Crate extends Group {
 
     public void shootAt() {
         realLives--;
+    }
+
+    public boolean isTargetCrate() {
+        return isTargetCrate;
     }
 }
