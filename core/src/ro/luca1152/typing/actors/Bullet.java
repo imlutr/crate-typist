@@ -1,27 +1,24 @@
 package ro.luca1152.typing.actors;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 
 import ro.luca1152.typing.TypingGame;
 import ro.luca1152.typing.Util;
 
-public class Bullet extends Image {
+public class Bullet extends Label {
     private Rectangle collisionBox;
     private Crate targetCrate;
 
     private float delay;
     private boolean removeBullet = false;
 
-    Bullet(TypingGame game, float x, float y, Crate targetCrate) {
-        super(game.getManager().get("textures/bullet.png", Texture.class));
+    Bullet(TypingGame game, char letter, float x, float y, Crate targetCrate) {
+        super(Character.toString(letter), game.getLabelStyle17bg());
         this.targetCrate = targetCrate;
-        this.setSize(10, 10);
         this.setPosition(x, y);
         this.setOrigin(getWidth() / 2f, getHeight() / 2f);
-        this.setRotation(Util.getAngleBetween(this, targetCrate));
         this.collisionBox = new Rectangle();
         this.collisionBox.setSize(getWidth(), getHeight());
     }
