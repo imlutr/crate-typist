@@ -1,5 +1,6 @@
 package ro.luca1152.typing.actors;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -27,9 +28,9 @@ public class Turret extends Image {
         setPosition(x, y);
         setOrigin(36f, 36f);
         tempSprite = new Sprite();
-        tempSprite.setPosition(x, y);
-        tempSprite.setOrigin(36f, 36f);
-        tempSprite.setSize(72, 96);
+        tempSprite.setPosition(x - 5, y - 5);
+        tempSprite.setOrigin(36 + 5f, 36 + 5f);
+        tempSprite.setSize(82, 108);
         this.game = game;
     }
 
@@ -71,7 +72,8 @@ public class Turret extends Image {
             float middleX = ((tempSprite.getVertices()[SpriteBatch.X2] + tempSprite.getVertices()[SpriteBatch.X3]) / 2f);
             float middleY = ((tempSprite.getVertices()[SpriteBatch.Y2] + tempSprite.getVertices()[SpriteBatch.Y3]) / 2f);
             for (int i = 0; i < queuedBullets; i++) {
-                Bullet bullet = new Bullet(game, middleX, middleY, tempTargetCrate);
+                Bullet bullet = new Bullet(game, tempTargetCrate.getLastFirstCharFromWord(), middleX, middleY, tempTargetCrate);
+                game.singleKeySound.play();
                 if (tempTargetCrate.lastLife()) {
                     tempTargetCrate.removeLabel();
                     removeTargetCrate();
@@ -90,7 +92,7 @@ public class Turret extends Image {
     }
 
     public void shoot(boolean isFirstBullet) {
-        ((GameMap)(bullets.getParent())).increaseScoreMultiplier();
+        ((GameMap) (bullets.getParent())).increaseScoreMultiplier();
         tempTargetCrate.shootAt();
         queuedBullets++;
         this.isFirstBullet = isFirstBullet;
@@ -102,7 +104,8 @@ public class Turret extends Image {
 
     public void setTargetCrate(Crate targetCrate) {
         targetCrate.setIsTargetCrate(true);
-        this.tempTargetCrate = targetCrate;
+        if (targetCrate != null)
+            this.tempTargetCrate=targetCrate;
         this.targetCrate = tempTargetCrate;
     }
 }
