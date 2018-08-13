@@ -60,13 +60,18 @@ public class Turret extends Image {
 
     private void shootQueuedBullets() {
         if (isFirstBullet) {
-                addAction(Actions.rotateTo(Util.getAngleBetween(this, targetCrate), .15f));
-                isFirstBullet = false;
+            float targetAngle = Util.getAngleBetween(this, targetCrate);
+            float difference = getRotation() - targetAngle;
+            if (Math.abs(difference) > 180)
+                addAction(Actions.rotateBy(Math.abs(Math.abs(difference) - 360) * ((difference >= 0) ? 1 : -1), .15f));
+            else
+                addAction(Actions.rotateTo(targetAngle, .15f));
+            isFirstBullet = false;
         }
         if (getActions().size == 0 && queuedBullets > 0) {
             float middleX = ((tempSprite.getVertices()[SpriteBatch.X2] + tempSprite.getVertices()[SpriteBatch.X3]) / 2f);
             float middleY = ((tempSprite.getVertices()[SpriteBatch.Y2] + tempSprite.getVertices()[SpriteBatch.Y3]) / 2f);
-            for (int i=0; i<queuedBullets; i++) {
+            for (int i = 0; i < queuedBullets; i++) {
                 Bullet bullet = new Bullet(game, middleX, middleY, tempTargetCrate);
                 if (tempTargetCrate.lastLife() && !removedTargetCrate) {
                     targetCrate.removeLabel();
@@ -74,7 +79,7 @@ public class Turret extends Image {
                     targetCrate = null;
                 }
                 bullets.addActor(bullet);
-                queuedBullets --;
+                queuedBullets--;
                 if (targetCrate == null)
                     break;
             }
