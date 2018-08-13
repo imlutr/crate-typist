@@ -80,7 +80,7 @@ public class Crate extends Group {
     }
 
     private void addLabel() {
-        label = new BackgroundLabel(word, game.getBackgroundLabelStyle());
+        label = new BackgroundLabel(word, game.getLabelStyle17bg());
         label.setPosition(getX(), getY() + 70);
         label.setSize(label.getWidth() + 4, label.getHeight() + 4);
         label.setAlignment(Align.center, Align.center);

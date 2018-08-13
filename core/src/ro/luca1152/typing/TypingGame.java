@@ -16,7 +16,7 @@ public class TypingGame extends Game {
     private Batch batch;
     private Viewport viewport;
     private AssetManager assetManager;
-    private Label.LabelStyle backgroundLabelStyle;
+    private Label.LabelStyle labelStyle17bg, labelStyle30;
     private String[] wordList;
 
     public LoadingScreen loadingScreen;
@@ -49,12 +49,20 @@ public class TypingGame extends Game {
         return assetManager;
     }
 
-    public Label.LabelStyle getBackgroundLabelStyle() {
-        return backgroundLabelStyle;
+    public Label.LabelStyle getLabelStyle17bg() {
+        return labelStyle17bg;
     }
 
-    public void setBackgroundLabelStyle(Label.LabelStyle backgroundLabelStyle) {
-        this.backgroundLabelStyle = backgroundLabelStyle;
+    public void setLabelStyle17bg(Label.LabelStyle labelStyle17bg) {
+        this.labelStyle17bg = labelStyle17bg;
+    }
+
+    public Label.LabelStyle getLabelStyle30() {
+        return labelStyle30;
+    }
+
+    public void setLabelStyle30(Label.LabelStyle labelStyle30) {
+        this.labelStyle30 = labelStyle30;
     }
 
     public String[] getWordList() {

@@ -73,7 +73,7 @@ public class Turret extends Image {
             for (int i = 0; i < queuedBullets; i++) {
                 Bullet bullet = new Bullet(game, middleX, middleY, tempTargetCrate);
                 if (tempTargetCrate.lastLife()) {
-                    targetCrate.removeLabel();
+                    tempTargetCrate.removeLabel();
                     removeTargetCrate();
                 }
                 bullets.addActor(bullet);
