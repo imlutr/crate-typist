@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.JsonValue;
@@ -50,9 +51,12 @@ public class Crate extends Group {
     private boolean reachedFinish = false;
     private boolean labelRemoved = false;
     private boolean isTargetCrate = false;
+    private float stepsTimer = 0f;
+    private float speed;
 
-    Crate(TypingGame game, ArrayList<String> allCratesWords, float mapX, float mapY, JsonValue currentMap) {
+    Crate(TypingGame game, ArrayList<String> allCratesWords, float mapX, float mapY, float speed, JsonValue currentMap) {
         this.game = game;
+        this.speed = speed;
         this.allCratesWords = allCratesWords;
         this.wordList = game.getWordList();
         this.setPosition(mapX * 64, mapY * 64);
@@ -65,7 +69,14 @@ public class Crate extends Group {
         getRandomWord();
         addCrateImage();
         addLabel();
+    }
 
+    @Override
+    protected void setStage(Stage stage) {
+        super.setStage(stage);
+        if (stage != null) {
+            gameMap = (GameMap) (getParent().getParent());
+        }
     }
 
     private void getRandomWord() {
@@ -126,27 +137,35 @@ public class Crate extends Group {
         updateColorBasedOnSteps();
     }
 
-    private void updateColorBasedOnSteps() {
-        if (stepsUntilFinish <= totalStepsToDo / 1.5f)
-            label.setColor(Color.YELLOW);
-        if (stepsUntilFinish <= totalStepsToDo / 3f)
-            label.setColor(Color.RED);
-        if (isTargetCrate)
-            label.setColor(Color.WHITE);
-    }
-
     public boolean wordIsEmpty() {
         return lives == 0;
     }
 
     public void removeCrate(boolean reachedFinish) {
+        updateScore();
+        if (reachedFinish)
+            game.shutdownSound.play();
+        else
+            game.crateBreakingSound.play();
         this.reachedFinish = reachedFinish;
         remove();
         allCratesWords.remove(initialWord);
+        gameMap.numberOfCratesRemaining--;
+        if (reachedFinish) {
+            game.gameOverScreen.score = gameMap.getScore();
+            game.gameOverScreen.wave = gameMap.getWave();
+            game.setScreen(game.gameOverScreen);
+        }
     }
 
-    private float stepsTimer = 0f;
-    private float speed = .5f;
+    GameMap gameMap;
+
+    private void updateScore() {
+        float scoreToAdd = 2 * gameMap.getScoreMultiplier() * scoreMultiplier;
+        gameMap.incrementScoreBy(scoreToAdd);
+    }
+
+
     private void updateStepsLeft(float delta) {
         stepsTimer -= delta;
         if (stepsTimer <= 0f) {
@@ -154,6 +173,23 @@ public class Crate extends Group {
             stepsUntilFinish--;
         }
     }
+
+    private float scoreMultiplier = 1f;
+
+    private void updateColorBasedOnSteps() {
+        if (stepsUntilFinish <= totalStepsToDo / 3f) {
+            label.setColor(Color.RED);
+            scoreMultiplier = 1.8f;
+        } else if (stepsUntilFinish <= totalStepsToDo / 1.5f) {
+            label.setColor(Color.YELLOW);
+            scoreMultiplier = 1.3f;
+        } else if (!isTargetCrate)
+            scoreMultiplier = .8f;
+        if (isTargetCrate)
+            label.setColor(Color.WHITE);
+    }
+
+    public char lastFirstCharFromWord;
 
     public char firstCharFromWord() {
         for (int i = 0; i < word.length(); i++) {
@@ -175,11 +211,16 @@ public class Crate extends Group {
     }
 
     public void keyPressed(String key) {
+        lastFirstCharFromWord = firstCharFromWord();
         if (!word.contains("[ORANGE]"))
             word = word.replaceFirst(key, " [ORANGE]");
         else
             word = word.replaceFirst(key, " ");
         label.setText(word);
+    }
+
+    public char getLastFirstCharFromWord() {
+        return lastFirstCharFromWord;
     }
 
     public Rectangle getCollisionBox() {
