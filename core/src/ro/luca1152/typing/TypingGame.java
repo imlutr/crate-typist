@@ -4,12 +4,15 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import ro.luca1152.typing.screens.GameOverScreen;
 import ro.luca1152.typing.screens.LoadingScreen;
 import ro.luca1152.typing.screens.MainMenuScreen;
 import ro.luca1152.typing.screens.PlayScreen;
@@ -18,13 +21,20 @@ public class TypingGame extends Game {
     private Batch batch;
     private Viewport viewport;
     private AssetManager assetManager;
-    private Label.LabelStyle labelStyle17bg, labelStyle30;
+    public Label.LabelStyle labelStyle17bg, labelStyle30, labelStyle30bg;
     private String[] wordList;
     private Preferences preferences;
 
     public LoadingScreen loadingScreen;
     public MainMenuScreen mainMenuScreen;
     public PlayScreen playScreen;
+    public GameOverScreen gameOverScreen;
+    public Music music;
+    public Sound singleKeySound;
+    public Sound enterKeySound;
+    public Sound errorSound;
+    public Sound crateBreakingSound;
+    public Sound shutdownSound;
 
     @Override
     public void create() {
@@ -37,6 +47,7 @@ public class TypingGame extends Game {
         loadingScreen = new LoadingScreen(this);
         mainMenuScreen = new MainMenuScreen(this);
         playScreen = new PlayScreen(this);
+        gameOverScreen = new GameOverScreen(this);
 
         setScreen(loadingScreen);
     }
