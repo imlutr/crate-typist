@@ -2,21 +2,13 @@ package ro.luca1152.typing;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-import java.util.ArrayList;
-
-import ro.luca1152.typing.actors.GameMap;
 import ro.luca1152.typing.screens.LoadingScreen;
-import ro.luca1152.typing.screens.PlayScreen;
 
 public class TypingGame extends Game {
     private Batch batch;
@@ -28,7 +20,7 @@ public class TypingGame extends Game {
     @Override
     public void create() {
         batch = new SpriteBatch();
-        viewport =  new FitViewport(640f, 640f);
+        viewport = new FitViewport(640f, 640f);
         assetManager = new AssetManager();
         wordList = new String[2261];
 
