@@ -27,7 +27,7 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 public class GameMap extends Group {
     private final TypingGame game;
     private final Color myBlue = new Color(52 / 255f, 152 / 255f, 219 / 255f, 1f);
-
+    public int numberOfCratesRemaining;
     // Map
     private ArrayList<String> allWords = new ArrayList<String>();
     private JsonValue currentMap;
@@ -35,19 +35,30 @@ public class GameMap extends Group {
     private int id;
     private float score;
     private float scoreMultiplierPercent = 0; // out of 1, used to determine the length of the score multiplier bar
-
     // Children
     private Image mapImage;
     private Group crates;
     private Group bullets;
     private Turret turret;
     private Image scoreMultiplierImage;
-    private float crateTimer = 0f;
+    private float crateTimer = 2f;
     private Label scoreMultiplierLabel;
+    private boolean atLeast2 = false;
+    private boolean atLeast3 = false;
+    private boolean atLeast4 = false;
+    private boolean atLeast5 = false;
+    private float speed = .3f;
+    private int wave = 1;
+    private int numberOfCrates;
+    private boolean useWaves;
+    private float waveTimer = 0f;
+    private boolean newWave = false;
+    private BackgroundLabel betweenWaves;
 
-    public GameMap(TypingGame game, int mapId) {
+    public GameMap(TypingGame game, int mapId, boolean useWaves) {
         this.game = game;
         this.id = mapId;
+        this.useWaves = useWaves;
 
         mapImage = new Image(game.getManager().get("maps/map" + mapId + ".png", Texture.class));
         addActor(mapImage);
@@ -62,12 +73,30 @@ public class GameMap extends Group {
         scoreMultiplierImage.setPosition(0f, 0f);
         scoreMultiplierImage.setHeight(10f);
         scoreMultiplierImage.setColor(myBlue);
-        scoreMultiplierLabel = new Label("", game.getLabelStyle30());
+        scoreMultiplierLabel = new BackgroundLabel("", game.getLabelStyle30());
         scoreMultiplierLabel.setPosition(20, 30);
 
+        betweenWaves = new BackgroundLabel(" ", game.labelStyle30bg);
+        betweenWaves.setPosition(40 - 300, 200);
+        showBetweenWavesLabel(wave);
+        addActor(betweenWaves);
         JsonReader jsonReader = new JsonReader();
         currentMap = jsonReader.parse(Gdx.files.internal("maps/maps.json")).get(id);
         finishPoints = finishPoints(currentMap);
+        calculateValuesForWave(1);
+    }
+
+    private void showBetweenWavesLabel(int wave) {
+        betweenWaves.setText("Wave: " + wave + "\n" + "Score: " + (int) score);
+        betweenWaves.setSize(betweenWaves.getPrefWidth(), betweenWaves.getPrefHeight());
+        betweenWaves.setStyle(game.labelStyle30bg);
+        betweenWaves.setPosition(40 - 300, 200);
+        betweenWaves.addAction(sequence(
+                delay(.5f),
+                Actions.moveBy(300, 0f, 1f),
+                delay(2f),
+                Actions.moveBy(-1000f, 0f, 1f)
+        ));
     }
 
     private Vector2[] finishPoints(JsonValue currentMap) {
@@ -83,6 +112,18 @@ public class GameMap extends Group {
         return finishPoints;
     }
 
+    private void calculateValuesForWave(int wave) {
+        numberOfCrates = (int) MathUtils.log2((float) Math.pow(wave, 10) * 100);
+        numberOfCratesRemaining = numberOfCrates;
+        speed = 1 / MathUtils.log2((float) Math.pow(wave, 0.4) * 3);
+        System.out.println("Wave " + wave + " : " + numberOfCrates + " crates, " + speed + " speed.");
+    }
+
+    private void printValuesForNWaves(int n) {
+        for (int i = 1; i <= n; i++)
+            calculateValuesForWave(i);
+    }
+
     @Override
     public void act(float delta) {
         super.act(delta);
@@ -90,13 +131,14 @@ public class GameMap extends Group {
         removeCratesAtFinishPoint();
         scoreMultiplierImage.setWidth(Gdx.graphics.getWidth() * scoreMultiplierPercent);
         exactScoreMultiplier();
+        waveFinished(delta);
     }
 
     private void spawnCrates(float delta) {
         crateTimer -= delta;
-        if (crateTimer <= 0f) {
+        if (crateTimer <= 0f && numberOfCrates > 0) {
             crateTimer = 1f;
-
+            numberOfCrates--;
             int randomSpawn = MathUtils.random(0, currentMap.getInt("numOfSpawns") - 1);
             Crate crate = newCrate(currentMap, randomSpawn);
             crates.addActor(crate);
@@ -112,18 +154,12 @@ public class GameMap extends Group {
                     if (!crate.wordIsEmpty()) {
                         if (crate.isTargetCrate())
                             turret.removeTargetCrate();
-                        resetScoreMultiplier();
                     }
                     ((Crate) actor).removeCrate(true);
                 }
             }
         }
     }
-
-    private boolean atLeast2 = false;
-    private boolean atLeast3 = false;
-    private boolean atLeast4 = false;
-    private boolean atLeast5 = false;
 
     private void exactScoreMultiplier() {
         if (getScoreMultiplier() >= 2 && !atLeast2) {
@@ -141,32 +177,50 @@ public class GameMap extends Group {
         }
     }
 
-    private void showLabel(CharSequence text) {
-        scoreMultiplierLabel.setText(text);
-        scoreMultiplierLabel.setColor(Color.WHITE);
-        scoreMultiplierLabel.setY(30 - 100f);
-        addActor(scoreMultiplierLabel);
-        scoreMultiplierLabel.addAction(sequence(
-                Actions.moveBy(0f, 100f, 1f, Interpolation.circleOut),
-                delay(2f),
-                Actions.moveBy(0f, -100f, 1f)
-        ));
+    public int getWave() {
+        return wave;
+    }
+
+    private void waveFinished(float delta) {
+        waveTimer -= delta;
+        if (numberOfCratesRemaining == 0 && !newWave) {
+            wave++;
+            showBetweenWavesLabel(wave);
+            newWave = true;
+            waveTimer = 3f;
+        }
+        if (newWave && waveTimer <= 0) {
+            newWave = false;
+            calculateValuesForWave(wave);
+        }
     }
 
     private Crate newCrate(JsonValue currentMap, int randomSpawn) {
         JsonValue spawn = currentMap.get("spawns").get(randomSpawn);
-        return new Crate(game, allWords, spawn.getInt("x"), spawn.getInt("y"), currentMap);
+        return new Crate(game, allWords, spawn.getInt("x"), spawn.getInt("y"), speed, currentMap);
     }
 
     private void addMovementActionsTo(Crate crate, int randomSpawn, JsonValue currentMap) {
         JsonValue path = currentMap.get("spawns").get(randomSpawn).get("path");
         for (JsonValue value : path)
-            crate.addAction(after(moveTo(value.getInt("x") * 64, value.getInt("y") * 64, value.getInt("distance") / 2f)));
+            crate.addAction(after(moveTo(value.getInt("x") * 64, value.getInt("y") * 64, value.getInt("distance") * speed)));
     }
 
-    public void resetScoreMultiplier() {
-        scoreMultiplierPercent = 0f;
-        atLeast2 = atLeast3 = atLeast4 = atLeast5 = false;
+    public float getScoreMultiplier() {
+        return scoreMultiplierPercent * 4 + 1;
+    }
+
+    private void showLabel(CharSequence text) {
+        scoreMultiplierLabel.setText(text);
+        scoreMultiplierLabel.setSize(scoreMultiplierLabel.getPrefWidth(), scoreMultiplierLabel.getPrefHeight());
+        scoreMultiplierLabel.setColor(Color.WHITE);
+        scoreMultiplierLabel.setY(30 - 100f);
+        addActor(scoreMultiplierLabel);
+        scoreMultiplierLabel.addAction(sequence(
+                Actions.moveBy(0f, 100f, .5f, Interpolation.circleOut),
+                delay(1.5f),
+                Actions.moveBy(0f, -100f, .5f)
+        ));
     }
 
     @Override
@@ -174,6 +228,7 @@ public class GameMap extends Group {
         Color color = getColor();
         batch.setColor(color.r, color.g, color.b, color.a * parentAlpha);
         mapImage.draw(batch, parentAlpha);
+        turret.draw(batch, parentAlpha);
         for (Actor child : crates.getChildren())
             ((Crate) child).getCrateImage().draw(batch, parentAlpha);
         for (Actor child : crates.getChildren()) {
@@ -182,10 +237,17 @@ public class GameMap extends Group {
         }
         for (Actor bullet : bullets.getChildren())
             bullet.draw(batch, parentAlpha);
-        turret.draw(batch, parentAlpha);
         if (scoreMultiplierLabel.getParent() != null)
             scoreMultiplierLabel.draw(batch, parentAlpha);
         scoreMultiplierImage.draw(batch, parentAlpha);
+        if (betweenWaves.getParent() != null)
+            betweenWaves.draw(batch, parentAlpha);
+    }
+
+    public void resetScoreMultiplier() {
+        game.errorSound.play();
+        scoreMultiplierPercent = 0f;
+        atLeast2 = atLeast3 = atLeast4 = atLeast5 = false;
     }
 
     public void increaseScoreMultiplier() {
@@ -195,28 +257,24 @@ public class GameMap extends Group {
     }
 
     private float getScoreMultiplierToAdd() {
-//        if (scoreMultiplierPercent <= .2f)
-//            return .006f;
-//        else if (scoreMultiplierPercent <= .4f)
-//            return .003f;
-//        else if (scoreMultiplierPercent <= .6f)
-//            return .0015f;
-//        else if (scoreMultiplierPercent <= .8f)
-//            return .00075f;
-//        else
-//            return .00003f;
-        if (scoreMultiplierPercent <= .25f)
-            return .06f;
-        else if (scoreMultiplierPercent <= .50f)
-            return .03f;
-        else if (scoreMultiplierPercent <= .75f)
-            return .03f;
+        if (scoreMultiplierPercent <= .2f)
+            return .006f;
+        else if (scoreMultiplierPercent <= .4f)
+            return .003f;
+        else if (scoreMultiplierPercent <= .6f)
+            return .0015f;
+        else if (scoreMultiplierPercent <= .8f)
+            return .00075f;
         else
-            return .03f;
-    }
-
-    private float getScoreMultiplier() {
-        return scoreMultiplierPercent * 4 + 1;
+            return .00003f;
+//        if (scoreMultiplierPercent <= .25f)
+//            return .06f;
+//        else if (scoreMultiplierPercent <= .50f)
+//            return .03f;
+//        else if (scoreMultiplierPercent <= .75f)
+//            return .03f;
+//        else
+//            return .03f;
     }
 
     public Turret getTurret() {
@@ -225,6 +283,14 @@ public class GameMap extends Group {
 
     public Group getCrates() {
         return crates;
+    }
+
+    public void incrementScoreBy(float value) {
+        score += value;
+    }
+
+    public float getScore() {
+        return score;
     }
 
     public Group getBullets() {
