@@ -2,6 +2,7 @@ package ro.luca1152.typing.desktop;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.graphics.Color;
 
 import ro.luca1152.typing.TypingGame;
 
@@ -12,6 +13,7 @@ public class DesktopLauncher {
         config.height = 640;
         config.title = "Typing";
         config.samples = 4;
+        config.initialBackgroundColor = new Color(46 / 255f, 204 / 255f, 113 / 255f, 1f);
         new LwjglApplication(new TypingGame(), config);
     }
 }
