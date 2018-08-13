@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 
 import ro.luca1152.typing.TypingGame;
@@ -38,6 +37,7 @@ public class LoadingScreen extends ScreenAdapter {
         game.getManager().load("textures/amethyst_crate.png", Texture.class);
         game.getManager().load("textures/turret.png", Texture.class);
         game.getManager().load("textures/bullet.png", Texture.class);
+        game.getManager().load("textures/pixel.png", Texture.class);
         game.getManager().load("maps/map0.png", Texture.class);
         game.getManager().load("fonts/pt_mono.fnt", BitmapFont.class);
         game.setWordList(Gdx.files.internal("words").readString().split("\\s+"));
@@ -55,7 +55,7 @@ public class LoadingScreen extends ScreenAdapter {
             game.getManager().get("textures/bullet.png", Texture.class).setFilter(TextureFilter.Linear, TextureFilter.Linear);
             game.getManager().get("maps/map0.png", Texture.class).setFilter(TextureFilter.Linear, TextureFilter.Linear);
             game.getManager().get("fonts/pt_mono.fnt", BitmapFont.class).getData().markupEnabled = true;
-            game.setLabelStyle(new Label.LabelStyle(game.getManager().get("fonts/pt_mono.fnt", BitmapFont.class), Color.WHITE));
+            game.setBackgroundLabelStyle(new Label.LabelStyle(game.getManager().get("fonts/pt_mono.fnt", BitmapFont.class), Color.WHITE));
 
             timer = (int)(timer*1000) / 1000f; // Get only 3 decimal places
             Gdx.app.log(LoadingScreen.class.getSimpleName(), "Finished loading assets in " + timer + "s.");
