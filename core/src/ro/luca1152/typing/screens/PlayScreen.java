@@ -21,12 +21,14 @@ public class PlayScreen extends ScreenAdapter {
 
     public PlayScreen(TypingGame game) {
         this.game = game;
-        stage = new Stage(game.getViewport(), game.getBatch());
     }
 
     @Override
     public void show() {
-        map = new GameMap(game, 0);
+        if (!game.music.isPlaying())
+            game.music.play();
+        stage = new Stage(game.getViewport(), game.getBatch());
+        map = new GameMap(game, 0, true);
         stage.addActor(map);
         setInputProcessor();
     }
