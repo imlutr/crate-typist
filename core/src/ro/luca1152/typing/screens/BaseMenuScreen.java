@@ -15,12 +15,13 @@ import ro.luca1152.typing.TypingGame;
 public class BaseMenuScreen extends ScreenAdapter {
     private Stage stage;
     ArrayList<Button> buttons;
+    public InputAdapter inputAdapter;
 
-    public BaseMenuScreen(TypingGame game) {
+    public BaseMenuScreen(final TypingGame game) {
         stage = new Stage(game.getViewport(), game.getBatch());
         buttons = new ArrayList<Button>();
 
-        Gdx.input.setInputProcessor(new InputAdapter() {
+        inputAdapter = new InputAdapter() {
             private Actor getHitActor(int screenX, int screenY, boolean touchable) {
                 return stage.hit(screenX, Gdx.graphics.getHeight() - screenY, touchable);
             }
@@ -46,11 +47,13 @@ public class BaseMenuScreen extends ScreenAdapter {
             @Override
             public boolean touchUp(int screenX, int screenY, int pointer, int button) {
                 Actor currentActor = getHitActor(screenX, screenY, false);
-                if (currentActor == touchedActor && currentActor != null && buttons.contains(currentActor))
+                if (currentActor == touchedActor && currentActor != null && buttons.contains(currentActor)) {
+                    game.enterKeySound.play();
                     ((Button) currentActor).doSomething();
+                }
                 return true;
             }
-        });
+        };
     }
 
     void addButtons(Button... buttonsToAdd) {
@@ -58,7 +61,7 @@ public class BaseMenuScreen extends ScreenAdapter {
         addActors(buttonsToAdd);
     }
 
-    void addActors(Actor ... actorsToAdd) {
+    void addActors(Actor... actorsToAdd) {
         for (Actor actor : actorsToAdd) {
             stage.addActor(actor);
         }
@@ -66,5 +69,11 @@ public class BaseMenuScreen extends ScreenAdapter {
 
     Stage getStage() {
         return stage;
+    }
+
+    @Override
+    public void hide() {
+        super.hide();
+        getStage().getActors().removeRange(0, getStage().getActors().size - 1);
     }
 }
