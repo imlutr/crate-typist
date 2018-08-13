@@ -9,6 +9,8 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import ro.luca1152.typing.screens.LoadingScreen;
+import ro.luca1152.typing.screens.MainMenuScreen;
+import ro.luca1152.typing.screens.PlayScreen;
 
 public class TypingGame extends Game {
     private Batch batch;
@@ -17,6 +19,10 @@ public class TypingGame extends Game {
     private Label.LabelStyle labelStyle;
     private String[] wordList;
 
+    public LoadingScreen loadingScreen;
+    public MainMenuScreen mainMenuScreen;
+    public PlayScreen playScreen;
+
     @Override
     public void create() {
         batch = new SpriteBatch();
@@ -24,7 +30,11 @@ public class TypingGame extends Game {
         assetManager = new AssetManager();
         wordList = new String[2261];
 
-        setScreen(new LoadingScreen(this));
+        loadingScreen = new LoadingScreen(this);
+        mainMenuScreen = new MainMenuScreen(this);
+        playScreen = new PlayScreen(this);
+
+        setScreen(loadingScreen);
     }
 
     public Batch getBatch() {

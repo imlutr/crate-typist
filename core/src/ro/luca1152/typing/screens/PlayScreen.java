@@ -13,17 +13,21 @@ import ro.luca1152.typing.actors.Crate;
 import ro.luca1152.typing.actors.GameMap;
 
 public class PlayScreen extends ScreenAdapter {
+    private final TypingGame game;
     private Stage stage;
     private static GameMap map;
     private Crate targetCrate = null;
     private float delay = 0f;
 
-    PlayScreen(TypingGame game) {
+    public PlayScreen(TypingGame game) {
+        this.game = game;
         stage = new Stage(game.getViewport(), game.getBatch());
+    }
 
+    @Override
+    public void show() {
         map = new GameMap(game, 0);
         stage.addActor(map);
-
         setInputProcessor();
     }
 

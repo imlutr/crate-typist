@@ -60,7 +60,7 @@ public class LoadingScreen extends ScreenAdapter {
             timer = (int)(timer*1000) / 1000f; // Get only 3 decimal places
             Gdx.app.log(LoadingScreen.class.getSimpleName(), "Finished loading assets in " + timer + "s.");
 
-            game.setScreen(new PlayScreen(game));
+            game.setScreen(game.mainMenuScreen);
         }
     }
 }
