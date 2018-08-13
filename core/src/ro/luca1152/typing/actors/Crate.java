@@ -1,5 +1,6 @@
 package ro.luca1152.typing.actors;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
@@ -139,6 +140,10 @@ public class Crate extends Group {
                 return word.charAt(i);
         }
         return ' ';
+    }
+
+    public boolean isOffScreen() {
+        return getY() < 0 || getX() < 0 || getX() > Gdx.graphics.getWidth() || getY() > Gdx.graphics.getHeight();
     }
 
     public void keyPressed(String key) {

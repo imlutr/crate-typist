@@ -41,7 +41,7 @@ public class PlayScreen extends ScreenAdapter {
                         boolean found = false;
                         for (Actor child : PlayScreen.map.getCrates().getChildren()) {
                             Crate crate = ((Crate) child);
-                            if (crate.firstCharFromWord() == keycodeToChar(keycode)) {
+                            if (crate.firstCharFromWord() == keycodeToChar(keycode) && !crate.isOffScreen()) {
                                 found = true;
                                 crate.keyPressed(keycodeToString(keycode));
                                 turret.setTargetCrate(crate);
