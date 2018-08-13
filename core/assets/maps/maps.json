@@ -1,7 +1,7 @@
 [
   {
     "name": "map1",
-
+    "totalSteps": 33,
     "turret": {
       "x": 284,
       "y": 284

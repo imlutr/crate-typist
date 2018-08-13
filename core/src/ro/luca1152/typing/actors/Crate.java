@@ -1,6 +1,7 @@
 package ro.luca1152.typing.actors;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
@@ -8,6 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.JsonValue;
 
 import java.util.ArrayList;
 
@@ -42,12 +44,14 @@ public class Crate extends Group {
     private String word;
     private int lives;
     private int realLives;
+    private int totalStepsToDo;
+    private int stepsUntilFinish;
 
     private boolean reachedFinish = false;
     private boolean labelRemoved = false;
     private boolean isTargetCrate = false;
 
-    Crate(TypingGame game, ArrayList<String> allCratesWords, float mapX, float mapY) {
+    Crate(TypingGame game, ArrayList<String> allCratesWords, float mapX, float mapY, JsonValue currentMap) {
         this.game = game;
         this.allCratesWords = allCratesWords;
         this.wordList = game.getWordList();
@@ -55,10 +59,13 @@ public class Crate extends Group {
         this.setSize(64, 64);
         this.setOrigin(getWidth() / 2f, getHeight() / 2f);
         this.collisionBox = new Rectangle();
-        collisionBox.setSize(getWidth(), getHeight());
+        this.collisionBox.setSize(getWidth(), getHeight());
+        this.totalStepsToDo = currentMap.getInt("totalSteps");
+        this.stepsUntilFinish = this.totalStepsToDo;
         getRandomWord();
         addCrateImage();
         addLabel();
+
     }
 
     private void getRandomWord() {
@@ -93,7 +100,7 @@ public class Crate extends Group {
             if (length == 0)
                 word = wordList[MathUtils.random(0, wordList.length - 1)];
             else
-                word = wordList[MathUtils.random((int)LENGTH_RANGE[length].x, (int)LENGTH_RANGE[length].y)];
+                word = wordList[MathUtils.random((int) LENGTH_RANGE[length].x, (int) LENGTH_RANGE[length].y)];
             int numSameFirstLetter = 0;
             for (int i = 0; i < allCratesWords.size(); i++) {
                 if (allCratesWords.get(i).charAt(0) == word.charAt(0))
@@ -115,6 +122,17 @@ public class Crate extends Group {
         label.setPosition(getX() + getWidth() / 2f - label.getPrefWidth() / 2f, getY() + 70);
         if (wordIsEmpty())
             removeCrate(false);
+        updateStepsLeft(delta);
+        updateColorBasedOnSteps();
+    }
+
+    private void updateColorBasedOnSteps() {
+        if (stepsUntilFinish <= totalStepsToDo / 1.5f)
+            label.setColor(Color.YELLOW);
+        if (stepsUntilFinish <= totalStepsToDo / 3f)
+            label.setColor(Color.RED);
+        if (isTargetCrate)
+            label.setColor(Color.WHITE);
     }
 
     public boolean wordIsEmpty() {
@@ -125,6 +143,16 @@ public class Crate extends Group {
         this.reachedFinish = reachedFinish;
         remove();
         allCratesWords.remove(initialWord);
+    }
+
+    private float stepsTimer = 0f;
+    private float speed = .5f;
+    private void updateStepsLeft(float delta) {
+        stepsTimer -= delta;
+        if (stepsTimer <= 0f) {
+            stepsTimer = speed;
+            stepsUntilFinish--;
+        }
     }
 
     public char firstCharFromWord() {

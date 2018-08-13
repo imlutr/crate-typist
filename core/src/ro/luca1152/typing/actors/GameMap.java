@@ -155,7 +155,7 @@ public class GameMap extends Group {
 
     private Crate newCrate(JsonValue currentMap, int randomSpawn) {
         JsonValue spawn = currentMap.get("spawns").get(randomSpawn);
-        return new Crate(game, allWords, spawn.getInt("x"), spawn.getInt("y"));
+        return new Crate(game, allWords, spawn.getInt("x"), spawn.getInt("y"), currentMap);
     }
 
     private void addMovementActionsTo(Crate crate, int randomSpawn, JsonValue currentMap) {
