@@ -9,21 +9,21 @@ import ro.luca1152.typing.TypingGame;
 import ro.luca1152.typing.Util;
 
 public class Bullet extends Image {
-    private Crate targetCrate;
     private Rectangle collisionBox;
+    private Crate targetCrate;
 
     private float delay;
     private boolean removeBullet = false;
 
-    Bullet(TypingGame game, Turret source, Crate targetCrate) {
+    Bullet(TypingGame game, float x, float y, Crate targetCrate) {
         super(game.getManager().get("textures/bullet.png", Texture.class));
         this.targetCrate = targetCrate;
-        setSize(10, 22);
-        setOrigin(getWidth() / 2f, getHeight() / 2f);
-        setPosition(source.getX(), source.getY());
-        setRotation(Util.getAngleBetween(this, targetCrate));
+        this.setSize(10, 10);
+        this.setPosition(x, y);
+        this.setOrigin(getWidth() / 2f, getHeight() / 2f);
+        this.setRotation(Util.getAngleBetween(this, targetCrate));
         this.collisionBox = new Rectangle();
-        collisionBox.setSize(getWidth(), getHeight());
+        this.collisionBox.setSize(getWidth(), getHeight());
     }
 
     @Override
@@ -39,13 +39,9 @@ public class Bullet extends Image {
     }
 
     private void handleCollision(float delta) {
-        delay -= delta;
         if (getCollisionBox().overlaps(targetCrate.getCollisionBox()) && !removeBullet) {
-            delay = .05f;
-            removeBullet = true;
-        }
-        if (removeBullet && delay <= 0) {
             remove();
+            targetCrate.collision();
         }
     }
 

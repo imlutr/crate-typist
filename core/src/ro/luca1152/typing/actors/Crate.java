@@ -39,25 +39,28 @@ public class Crate extends Group {
     private Image crateImage;
     private String initialWord;
     private String word;
+    private int lives;
+    private int realLives;
 
     private boolean reachedFinish = false;
+    private boolean labelRemoved = false;
 
     Crate(TypingGame game, ArrayList<String> allCratesWords, float mapX, float mapY) {
         this.game = game;
         this.allCratesWords = allCratesWords;
         this.wordList = game.getWordList();
+        this.setPosition(mapX * 64, mapY * 64);
+        this.setSize(64, 64);
+        this.setOrigin(getWidth() / 2f, getHeight() / 2f);
         this.collisionBox = new Rectangle();
-        setPosition(mapX * 64, mapY * 64);
-        setSize(64, 64);
         collisionBox.setSize(getWidth(), getHeight());
-        setOrigin(getWidth() / 2f, getHeight() / 2f);
         getRandomWord();
         addCrateImage();
         addLabel();
     }
 
     private void getRandomWord() {
-        getRandomWord(MathUtils.random(2, 14));
+        getRandomWord(0);
     }
 
     private void addCrateImage() {
@@ -84,9 +87,11 @@ public class Crate extends Group {
     }
 
     private void getRandomWord(int length) {
-        // Has to have the first letter different to all the other crates' word
         while (true) {
-            word = wordList[MathUtils.random(0, wordList.length - 1)];
+            if (length == 0)
+                word = wordList[MathUtils.random(0, wordList.length - 1)];
+            else
+                word = wordList[MathUtils.random((int)LENGTH_RANGE[length].x, (int)LENGTH_RANGE[length].y)];
             int numSameFirstLetter = 0;
             for (int i = 0; i < allCratesWords.size(); i++) {
                 if (allCratesWords.get(i).charAt(0) == word.charAt(0))
@@ -96,6 +101,8 @@ public class Crate extends Group {
                 break;
         }
         initialWord = word;
+        realLives = initialWord.length();
+        lives = realLives;
         allCratesWords.add(initialWord);
     }
 
@@ -109,7 +116,7 @@ public class Crate extends Group {
     }
 
     public boolean wordIsEmpty() {
-        return firstCharFromWord() == ' ';
+        return lives == 0;
     }
 
     public void removeCrate(boolean reachedFinish) {
@@ -146,6 +153,14 @@ public class Crate extends Group {
         return collisionBox;
     }
 
+    public void removeLabel() {
+        labelRemoved = true;
+    }
+
+    public boolean isLabelRemoved() {
+        return labelRemoved;
+    }
+
     public BackgroundLabel getLabel() {
         return label;
     }
@@ -154,7 +169,19 @@ public class Crate extends Group {
         return crateImage;
     }
 
-    public boolean isReachedFinish() {
+    public boolean reachedFinish() {
         return reachedFinish;
+    }
+
+    public void collision() {
+        lives--;
+    }
+
+    public boolean lastLife() {
+        return realLives == 0;
+    }
+
+    public void shootAt() {
+        realLives--;
     }
 }

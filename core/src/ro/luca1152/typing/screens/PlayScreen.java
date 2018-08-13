@@ -31,6 +31,8 @@ public class PlayScreen extends ScreenAdapter {
         Gdx.input.setInputProcessor(new InputAdapter() {
             @Override
             public boolean keyDown(int keycode) {
+                if (PlayScreen.map.getTurret().isRemovedTargetCrate())
+                    targetCrate = null;
                 if (keycode >= Keys.A && keycode <= Keys.Z && delay <= 0f) {
                     if (targetCrate == null) {
                         for (Actor child : PlayScreen.map.getCrates().getChildren()) {
@@ -38,47 +40,30 @@ public class PlayScreen extends ScreenAdapter {
                             if (crate.firstCharFromWord() == keycodeToChar(keycode)) {
                                 targetCrate = crate;
                                 crate.keyPressed(keycodeToString(keycode));
-                                if (targetCrate.wordIsEmpty() || targetCrate.isReachedFinish()) {
+                                if (targetCrate.wordIsEmpty() || targetCrate.reachedFinish()) {
                                     targetCrate = null;
                                 }
-                                PlayScreen.map.getTurret().setTargetCrate(targetCrate);
-                                PlayScreen.map.getTurret().shoot(targetCrate);
+                                PlayScreen.map.getTurret().shoot(targetCrate, true);
                                 return true;
                             }
                         }
                     } else {
                         // The word is in progress
-                        if (targetCrate.firstCharFromWord() == keycodeToChar(keycode))
-                        {
+                        if (targetCrate.firstCharFromWord() == keycodeToChar(keycode)) {
                             targetCrate.keyPressed(keycodeToString(keycode));
-                            PlayScreen.map.getTurret().shoot(targetCrate);
-                        }
-
-                        // Finished the word
-                        if (targetCrate.wordIsEmpty()) {
-                            targetCrate = null;
-                            PlayScreen.map.getTurret().setTargetCrate(targetCrate);
+                            PlayScreen.map.getTurret().shoot(targetCrate, false);
                         }
 
                         // While typing, the box reached the finish point.
                         // May result in unexpected key presses, hence the delay.
-                        else if (!targetCrate.wordIsEmpty() && targetCrate.isReachedFinish()){
+                        else if (!targetCrate.wordIsEmpty() && targetCrate.reachedFinish()) {
                             delay = .2f;
                             targetCrate = null;
-                            PlayScreen.map.getTurret().setTargetCrate(targetCrate);
+                            PlayScreen.map.getTurret().removeTargetCrate();
                         }
                     }
                 }
                 return false;
-            }
-
-            @Override
-            public boolean keyUp(int keycode) {
-                if (keycode == Keys.A || keycode == Keys.LEFT)
-                    map.getTurret().rotatingLeft = false;
-                if (keycode == Keys.D || keycode == Keys.RIGHT)
-                    map.getTurret().rotatingRight = false;
-                return true;
             }
         });
     }

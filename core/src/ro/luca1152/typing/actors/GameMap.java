@@ -29,8 +29,9 @@ public class GameMap extends Group {
 
     // Children
     private Image mapImage;
-    private Turret turret;
     private Group crates;
+    private Turret turret;
+    private Group bullets;
 
     private float crateTimer = 0f;
 
@@ -41,11 +42,12 @@ public class GameMap extends Group {
         mapImage = new Image(game.getManager().get("maps/map" + mapId + ".png", Texture.class));
         addActor(mapImage);
 
-        turret = new Turret(game, 284f, 284f);
-        addActor(turret);
-
         crates = new Group();
         addActor(crates);
+        bullets = new Group();
+        addActor(bullets);
+        turret = new Turret(game, 284f, 284f);
+        addActor(turret);
 
         JsonReader jsonReader = new JsonReader();
         currentMap = jsonReader.parse(Gdx.files.internal("maps/maps.json")).get(id);
@@ -75,7 +77,7 @@ public class GameMap extends Group {
     private void spawnCrates(float delta) {
         crateTimer -= delta;
         if (crateTimer <= 0f) {
-            crateTimer = 1.5f;
+            crateTimer = 1f;
 
             int randomSpawn = MathUtils.random(0, currentMap.getInt("numOfSpawns") - 1);
             Crate crate = newCrate(currentMap, randomSpawn);
@@ -108,11 +110,15 @@ public class GameMap extends Group {
     @Override
     public void draw(Batch batch, float parentAlpha) {
         mapImage.draw(batch, parentAlpha);
-        turret.draw(batch, parentAlpha);
         for (Actor child : crates.getChildren())
             ((Crate) child).getCrateImage().draw(batch, parentAlpha);
-        for (Actor child : crates.getChildren())
-            ((Crate) child).getLabel().draw(batch, parentAlpha);
+        for (Actor child : crates.getChildren()) {
+            if (!((Crate) child).isLabelRemoved())
+                ((Crate) child).getLabel().draw(batch, parentAlpha);
+        }
+        for (Actor bullet : bullets.getChildren())
+            bullet.draw(batch, parentAlpha);
+        turret.draw(batch, parentAlpha);
     }
 
     public Turret getTurret() {
@@ -121,5 +127,9 @@ public class GameMap extends Group {
 
     public Group getCrates() {
         return crates;
+    }
+
+    public Group getBullets() {
+        return bullets;
     }
 }
