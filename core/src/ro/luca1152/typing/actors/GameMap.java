@@ -26,13 +26,16 @@ public class GameMap extends Group {
     private JsonValue currentMap;
     private Vector2[] finishPoints;
     private int id;
+    private float score;
+    private float scoreMultiplier = 1; // the real value, used to calculate the score
+    private float scoreMultiplierPercent = 0; // out of 1, used to determine the length of the score multiplier bar
 
     // Children
     private Image mapImage;
     private Group crates;
-    private Turret turret;
     private Group bullets;
-
+    private Turret turret;
+    private Image scoreMultiplierImage;
     private float crateTimer = 0f;
 
     public GameMap(TypingGame game, int mapId) {
@@ -48,6 +51,10 @@ public class GameMap extends Group {
         addActor(bullets);
         turret = new Turret(game, 284f, 284f);
         addActor(turret);
+        scoreMultiplierImage = new Image(game.getManager().get("textures/pixel.png", Texture.class));
+        scoreMultiplierImage.setPosition(0f, 0f);
+        scoreMultiplierImage.setHeight(10f);
+        scoreMultiplierImage.setColor(52 / 255f, 152 / 255f, 219 / 255f, 1f);
 
         JsonReader jsonReader = new JsonReader();
         currentMap = jsonReader.parse(Gdx.files.internal("maps/maps.json")).get(id);
@@ -87,10 +94,16 @@ public class GameMap extends Group {
     }
 
     private void removeCratesAtFinishPoint() {
-        for (Actor crate : crates.getChildren()) {
+        for (Actor actor : crates.getChildren()) {
             for (Vector2 finishPoint : finishPoints) {
-                if (crate.getX() == finishPoint.x * 64 && crate.getY() == finishPoint.y * 64) {
-                    ((Crate) crate).removeCrate(true);
+                if (actor.getX() == finishPoint.x * 64 && actor.getY() == finishPoint.y * 64) {
+                    Crate crate = (Crate) actor;
+                    if (!crate.wordIsEmpty()) {
+                        if (crate.isTargetCrate())
+                            turret.removeTargetCrate();
+                        resetScoreMultiplier();
+                    }
+                    ((Crate) actor).removeCrate(true);
                 }
             }
         }
@@ -119,6 +132,31 @@ public class GameMap extends Group {
         for (Actor bullet : bullets.getChildren())
             bullet.draw(batch, parentAlpha);
         turret.draw(batch, parentAlpha);
+        scoreMultiplierImage.setWidth(Gdx.graphics.getWidth() * scoreMultiplierPercent);
+        scoreMultiplierImage.draw(batch, parentAlpha);
+    }
+
+    public void increaseScoreMultiplier() {
+        scoreMultiplierPercent += getScoreMultiplierToAdd();
+        if (scoreMultiplierPercent > 1f)
+            scoreMultiplierPercent = 1f;
+    }
+
+    public void resetScoreMultiplier() {
+        scoreMultiplierPercent = 0f;
+    }
+
+    private float getScoreMultiplierToAdd() {
+        if (scoreMultiplierPercent <= .2f)
+            return .006f;
+        else if (scoreMultiplierPercent <= .4f)
+            return .003f;
+        else if (scoreMultiplierPercent <= .6f)
+            return .0015f;
+        else if (scoreMultiplierPercent <= .8f)
+            return .00075f;
+        else
+            return .00003f;
     }
 
     public Turret getTurret() {

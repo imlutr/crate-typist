@@ -19,7 +19,6 @@ public class Turret extends Image {
 
     private Sprite tempSprite;
     private int queuedBullets = 0;
-    private boolean removedTargetCrate = false;
     private boolean isFirstBullet = false;
     private Crate tempTargetCrate;
 
@@ -73,10 +72,9 @@ public class Turret extends Image {
             float middleY = ((tempSprite.getVertices()[SpriteBatch.Y2] + tempSprite.getVertices()[SpriteBatch.Y3]) / 2f);
             for (int i = 0; i < queuedBullets; i++) {
                 Bullet bullet = new Bullet(game, middleX, middleY, tempTargetCrate);
-                if (tempTargetCrate.lastLife() && !removedTargetCrate) {
+                if (tempTargetCrate.lastLife()) {
                     targetCrate.removeLabel();
-                    removedTargetCrate = true;
-                    targetCrate = null;
+                    removeTargetCrate();
                 }
                 bullets.addActor(bullet);
                 queuedBullets--;
@@ -86,22 +84,25 @@ public class Turret extends Image {
         }
     }
 
-    public void shoot(Crate targetCrate, boolean isFirstBullet) {
-        this.tempTargetCrate = targetCrate;
-        this.targetCrate = tempTargetCrate;
-        targetCrate.shootAt();
+    public void removeTargetCrate() {
+        tempTargetCrate.setIsTargetCrate(false);
+        targetCrate = null;
+    }
+
+    public void shoot(boolean isFirstBullet) {
+        ((GameMap)(bullets.getParent())).increaseScoreMultiplier();
+        tempTargetCrate.shootAt();
         queuedBullets++;
         this.isFirstBullet = isFirstBullet;
     }
 
-    public void removeTargetCrate() {
-        targetCrate = null;
+    public Crate getTargetCrate() {
+        return targetCrate;
     }
 
-    public boolean isRemovedTargetCrate() {
-        boolean t = removedTargetCrate;
-        if (removedTargetCrate)
-            removedTargetCrate = false;
-        return t;
+    public void setTargetCrate(Crate targetCrate) {
+        targetCrate.setIsTargetCrate(true);
+        this.tempTargetCrate = targetCrate;
+        this.targetCrate = tempTargetCrate;
     }
 }

@@ -11,12 +11,12 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import ro.luca1152.typing.TypingGame;
 import ro.luca1152.typing.actors.Crate;
 import ro.luca1152.typing.actors.GameMap;
+import ro.luca1152.typing.actors.Turret;
 
 public class PlayScreen extends ScreenAdapter {
     private final TypingGame game;
     private Stage stage;
     private static GameMap map;
-    private Crate targetCrate = null;
     private float delay = 0f;
 
     public PlayScreen(TypingGame game) {
@@ -35,35 +35,34 @@ public class PlayScreen extends ScreenAdapter {
         Gdx.input.setInputProcessor(new InputAdapter() {
             @Override
             public boolean keyDown(int keycode) {
-                if (PlayScreen.map.getTurret().isRemovedTargetCrate())
-                    targetCrate = null;
+                Turret turret = PlayScreen.map.getTurret();
                 if (keycode >= Keys.A && keycode <= Keys.Z && delay <= 0f) {
-                    if (targetCrate == null) {
+                    if (turret.getTargetCrate() == null) {
+                        boolean found = false;
                         for (Actor child : PlayScreen.map.getCrates().getChildren()) {
                             Crate crate = ((Crate) child);
                             if (crate.firstCharFromWord() == keycodeToChar(keycode)) {
-                                targetCrate = crate;
+                                found = true;
                                 crate.keyPressed(keycodeToString(keycode));
-                                if (targetCrate.wordIsEmpty() || targetCrate.reachedFinish()) {
-                                    targetCrate = null;
-                                }
-                                PlayScreen.map.getTurret().shoot(targetCrate, true);
+                                turret.setTargetCrate(crate);
+                                PlayScreen.map.getTurret().shoot(true);
                                 return true;
                             }
                         }
+                        // A key was entered that does not correspond to any word => mistake
+                        if (!found) {
+                            PlayScreen.map.resetScoreMultiplier();
+                        }
                     } else {
                         // The word is in progress
-                        if (targetCrate.firstCharFromWord() == keycodeToChar(keycode)) {
-                            targetCrate.keyPressed(keycodeToString(keycode));
-                            PlayScreen.map.getTurret().shoot(targetCrate, false);
+                        if (turret.getTargetCrate().firstCharFromWord() == keycodeToChar(keycode)) {
+                            turret.getTargetCrate().keyPressed(keycodeToString(keycode));
+                            turret.shoot(false);
                         }
 
-                        // While typing, the box reached the finish point.
-                        // May result in unexpected key presses, hence the delay.
-                        else if (!targetCrate.wordIsEmpty() && targetCrate.reachedFinish()) {
-                            delay = .2f;
-                            targetCrate = null;
-                            PlayScreen.map.getTurret().removeTargetCrate();
+                        // A wrong key was entered
+                        else if (turret.getTargetCrate().firstCharFromWord() != keycodeToChar(keycode)) {
+                            PlayScreen.map.resetScoreMultiplier();
                         }
                     }
                 }
