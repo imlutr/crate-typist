@@ -25,12 +25,9 @@ public class PlayScreen extends ScreenAdapter {
 
     @Override
     public void show() {
-        if (!game.music.isPlaying()) {
-            game.music.play();
-            game.music.stop();
-            game.music.play();
-            game.music.setLooping(true);
-        }
+        game.music.play();
+        game.music.setVolume(.4f);
+        game.music.setLooping(true);
         stage = new Stage(game.getViewport(), game.getBatch());
         map = new GameMap(game, 0, true);
         stage.addActor(map);
