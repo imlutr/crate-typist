@@ -144,9 +144,9 @@ public class Crate extends Group {
     public void removeCrate(boolean reachedFinish) {
         updateScore();
         if (reachedFinish)
-            game.shutdownSound.play();
+            game.shutdownSound.play(.7f);
         else
-            game.crateBreakingSound.play();
+            game.crateBreakingSound.play(.7f);
         this.reachedFinish = reachedFinish;
         remove();
         allCratesWords.remove(initialWord);

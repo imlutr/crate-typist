@@ -249,7 +249,7 @@ public class GameMap extends Group {
     }
 
     public void resetScoreMultiplier() {
-        game.errorSound.play();
+        game.errorSound.play(.4f);
         scoreMultiplierPercent = 0f;
         atLeast2 = atLeast3 = atLeast4 = atLeast5 = false;
     }
