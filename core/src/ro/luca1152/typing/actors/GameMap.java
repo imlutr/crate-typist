@@ -239,6 +239,8 @@ public class GameMap extends Group {
             if (!((Crate) child).isLabelRemoved())
                 ((Crate) child).getLabel().draw(batch, parentAlpha);
         }
+        if (turret.getTargetCrate() != null && !turret.getTargetCrate().isLabelRemoved()) // Draw the target crate's label above every other label
+            turret.getTargetCrate().getLabel().draw(batch, parentAlpha);
         for (Actor bullet : bullets.getChildren())
             bullet.draw(batch, parentAlpha);
         if (scoreMultiplierLabel.getParent() != null)
