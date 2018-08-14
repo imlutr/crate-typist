@@ -27,6 +27,8 @@ public class PlayScreen extends ScreenAdapter {
     public void show() {
         if (!game.music.isPlaying()) {
             game.music.play();
+            game.music.stop();
+            game.music.play();
             game.music.setLooping(true);
         }
         stage = new Stage(game.getViewport(), game.getBatch());
