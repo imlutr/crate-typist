@@ -72,6 +72,7 @@ public class LoadingScreen extends ScreenAdapter {
             game.getManager().get("maps/map0.png", Texture.class).setFilter(TextureFilter.Linear, TextureFilter.Linear);
             game.getManager().get("fonts/pt_mono_17.fnt", BitmapFont.class).getData().markupEnabled = true;
             game.setLabelStyle17bg(new Label.LabelStyle(game.getManager().get("fonts/pt_mono_17.fnt", BitmapFont.class), Color.WHITE));
+            game.labelStyle17bg2 = new Label.LabelStyle(game.getManager().get("fonts/pt_mono_17.fnt", BitmapFont.class), Color.WHITE);
             game.getManager().get("fonts/pt_mono_23.fnt", BitmapFont.class).getData().markupEnabled = true;
             game.getManager().get("fonts/pt_mono_30.fnt", BitmapFont.class).getData().markupEnabled = true;
             game.setLabelStyle30(new Label.LabelStyle(game.getManager().get("fonts/pt_mono_30.fnt", BitmapFont.class), Color.WHITE));

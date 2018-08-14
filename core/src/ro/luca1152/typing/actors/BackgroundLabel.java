@@ -8,8 +8,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 public class BackgroundLabel extends Label {
     public BackgroundLabel(CharSequence text, LabelStyle labelStyle) {
         super(text, labelStyle);
+        setOpacity(.65f);
+    }
+
+    public void setOpacity(float opacity) {
         Pixmap labelBg = new Pixmap((int)getPrefWidth(), (int)getPrefHeight()+100, Pixmap.Format.RGBA8888);
-        labelBg.setColor(0f, 0f, 0f, 0.65f);
+        labelBg.setColor(0f, 0f, 0f, opacity);
         labelBg.fill();
         getStyle().background = new Image(new Texture(labelBg)).getDrawable();
     }

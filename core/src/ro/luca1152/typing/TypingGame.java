@@ -6,6 +6,7 @@ import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -21,7 +22,7 @@ public class TypingGame extends Game {
     private Batch batch;
     private Viewport viewport;
     private AssetManager assetManager;
-    public Label.LabelStyle labelStyle17bg, labelStyle30, labelStyle30bg;
+    public Label.LabelStyle labelStyle17bg, labelStyle17bg2, labelStyle30, labelStyle30bg;
     private String[] wordList;
     private Preferences preferences;
 

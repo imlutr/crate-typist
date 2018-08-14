@@ -230,6 +230,10 @@ public class Crate extends Group {
 
     public void setIsTargetCrate(boolean targetCrate) {
         isTargetCrate = targetCrate;
+        if (isTargetCrate) {
+            label.setStyle(game.labelStyle17bg2);
+            label.setOpacity(1f);
+        }
     }
 
     public void removeLabel() {
