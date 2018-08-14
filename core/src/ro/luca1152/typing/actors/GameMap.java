@@ -83,6 +83,7 @@ public class GameMap extends Group {
         JsonReader jsonReader = new JsonReader();
         currentMap = jsonReader.parse(Gdx.files.internal("maps/maps.json")).get(id);
         finishPoints = finishPoints(currentMap);
+//        printValuesForNWaves(20);
         calculateValuesForWave(1);
     }
 
@@ -113,10 +114,11 @@ public class GameMap extends Group {
     }
 
     private void calculateValuesForWave(int wave) {
-        numberOfCrates = (int) MathUtils.log2((float) Math.pow(wave, 10) * 100);
+        numberOfCrates = (int) MathUtils.log2((float) Math.pow(wave, 6) * 100);
         numberOfCratesRemaining = numberOfCrates;
-        speed = 1 / MathUtils.log2((float) Math.pow(wave, 0.4) * 3);
-        System.out.println("Wave " + wave + " : " + numberOfCrates + " crates, " + speed + " speed.");
+        speed = 1 / MathUtils.log2((float) Math.pow(wave, 0.75) * 3);
+        timeBetweenCrates = 1 / MathUtils.log2((float) Math.pow(wave, 0.1) * 2);
+        System.out.println("Wave " + wave + " : " + numberOfCrates + " crates,\t\t" + speed + " speed,\t\t" + timeBetweenCrates + "s between crates.");
     }
 
     private void printValuesForNWaves(int n) {
@@ -134,10 +136,12 @@ public class GameMap extends Group {
         waveFinished(delta);
     }
 
+    private float timeBetweenCrates;
+
     private void spawnCrates(float delta) {
         crateTimer -= delta;
         if (crateTimer <= 0f && numberOfCrates > 0) {
-            crateTimer = 1f;
+            crateTimer = timeBetweenCrates;
             numberOfCrates--;
             int randomSpawn = MathUtils.random(0, currentMap.getInt("numOfSpawns") - 1);
             Crate crate = newCrate(currentMap, randomSpawn);
