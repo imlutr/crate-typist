@@ -135,6 +135,9 @@ public class Crate extends Group {
             removeCrate(false);
         updateStepsLeft(delta);
         updateColorBasedOnSteps();
+        if (lives == 0) {
+            remove();
+        }
     }
 
     public boolean wordIsEmpty() {
@@ -164,7 +167,6 @@ public class Crate extends Group {
         float scoreToAdd = 2 * gameMap.getScoreMultiplier() * scoreMultiplier;
         gameMap.incrementScoreBy(scoreToAdd);
     }
-
 
     private void updateStepsLeft(float delta) {
         stepsTimer -= delta;

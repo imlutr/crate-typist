@@ -37,8 +37,8 @@ public class Bullet extends Label {
 
     private void handleCollision(float delta) {
         if (getCollisionBox().overlaps(targetCrate.getCollisionBox()) && !removeBullet) {
-            remove();
             targetCrate.collision();
+            remove();
         }
     }
 
