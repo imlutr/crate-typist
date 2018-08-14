@@ -22,6 +22,7 @@ public class MainMenuScreen extends BaseMenuScreen {
         Gdx.input.setInputProcessor(inputAdapter);
         game.music.setVolume(.4f);
         game.music.play();
+        game.music.setLooping(true);
         Label.LabelStyle labelStyle23bg = new Label.LabelStyle(game.getManager().get("fonts/pt_mono_23.fnt", BitmapFont.class), Color.WHITE);
 
         Label.LabelStyle labelStyle50bg = new Label.LabelStyle(game.getManager().get("fonts/pt_mono_50.fnt", BitmapFont.class), Color.WHITE);
