@@ -2,6 +2,10 @@ package ro.luca1152.typing.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.assets.loaders.MusicLoader;
+import com.badlogic.gdx.assets.loaders.SoundLoader;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -46,6 +50,12 @@ public class LoadingScreen extends ScreenAdapter {
         game.getManager().load("fonts/pt_mono_23.fnt", BitmapFont.class);
         game.getManager().load("fonts/pt_mono_30.fnt", BitmapFont.class);
         game.getManager().load("fonts/pt_mono_50.fnt", BitmapFont.class);
+        game.getManager().load("audio/music.mp3", Music.class);
+        game.getManager().load("audio/single_key.mp3", Sound.class);
+        game.getManager().load("audio/enter_key.wav", Sound.class);
+        game.getManager().load("audio/error.mp3", Sound.class);
+        game.getManager().load("audio/crate_breaking.wav", Sound.class);
+        game.getManager().load("audio/shutdown.mp3", Sound.class);
         game.setWordList(Gdx.files.internal("words").readString().split("\\s+"));
     }
 
@@ -66,12 +76,12 @@ public class LoadingScreen extends ScreenAdapter {
             game.getManager().get("fonts/pt_mono_30.fnt", BitmapFont.class).getData().markupEnabled = true;
             game.setLabelStyle30(new Label.LabelStyle(game.getManager().get("fonts/pt_mono_30.fnt", BitmapFont.class), Color.WHITE));
             game.labelStyle30bg = new Label.LabelStyle(game.getManager().get("fonts/pt_mono_30.fnt", BitmapFont.class), Color.WHITE);
-            game.music = Gdx.audio.newMusic(Gdx.files.internal("audio/music.mp3"));
-            game.singleKeySound = Gdx.audio.newSound(Gdx.files.internal("audio/single_key.mp3"));
-            game.enterKeySound = Gdx.audio.newSound(Gdx.files.internal("audio/enter_key.wav"));
-            game.errorSound = Gdx.audio.newSound(Gdx.files.internal("audio/error.mp3"));
-            game.crateBreakingSound = Gdx.audio.newSound(Gdx.files.internal("audio/crate_breaking.wav"));
-            game.shutdownSound = Gdx.audio.newSound(Gdx.files.internal("audio/shutdown.mp3"));
+            game.music = game.getManager().get("audio/music.mp3", Music.class);
+            game.singleKeySound = game.getManager().get("audio/single_key.mp3", Sound.class);
+            game.enterKeySound = game.getManager().get("audio/enter_key.wav", Sound.class);
+            game.errorSound = game.getManager().get("audio/error.mp3", Sound.class);
+            game.crateBreakingSound = game.getManager().get("audio/crate_breaking.wav", Sound.class);
+            game.shutdownSound = game.getManager().get("audio/shutdown.mp3", Sound.class);
 
             timer = (int) (timer * 1000) / 1000f; // Get only 3 decimal places
             Gdx.app.log(LoadingScreen.class.getSimpleName(), "Finished loading assets in " + timer + "s.");
