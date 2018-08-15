@@ -54,6 +54,7 @@ public class GameMap extends Group {
     private float waveTimer = 0f;
     private boolean newWave = false;
     private BackgroundLabel betweenWaves;
+    private float timeBetweenCrates;
 
     public GameMap(TypingGame game, int mapId, boolean useWaves) {
         this.game = game;
@@ -83,7 +84,7 @@ public class GameMap extends Group {
         JsonReader jsonReader = new JsonReader();
         currentMap = jsonReader.parse(Gdx.files.internal("maps/maps.json")).get(id);
         finishPoints = finishPoints(currentMap);
-//        printValuesForNWaves(20);
+        printValuesForNWaves(20);
         calculateValuesForWave(1);
     }
 
@@ -113,17 +114,18 @@ public class GameMap extends Group {
         return finishPoints;
     }
 
-    private void calculateValuesForWave(int wave) {
-        numberOfCrates = (int) MathUtils.log2((float) Math.pow(wave, 6) * 100);
-        numberOfCratesRemaining = numberOfCrates;
-        speed = 1 / MathUtils.log2((float) Math.pow(wave, 0.75) * 3);
-        timeBetweenCrates = 1 / MathUtils.log2((float) Math.pow(wave, 0.1) * 2);
-        System.out.println("Wave " + wave + " : " + numberOfCrates + " crates,\t\t" + speed + " speed,\t\t" + timeBetweenCrates + "s between crates.");
-    }
-
     private void printValuesForNWaves(int n) {
         for (int i = 1; i <= n; i++)
             calculateValuesForWave(i);
+    }
+
+    private void calculateValuesForWave(int wave) {
+        numberOfCrates = (int) MathUtils.log2((float) Math.pow(wave, 6) * 100);
+        numberOfCratesRemaining = numberOfCrates;
+        speed = 1 / MathUtils.log2((float) Math.pow(wave, 0.45f) * 2f);
+        timeBetweenCrates = 1 / MathUtils.log2((float) Math.pow(wave, 0.13) * 2) + .1f;
+        if (wave == 1) speed = .8f;
+        System.out.println("Wave " + wave + " : " + numberOfCrates + " crates,\t\t" + speed + " speed,\t\t" + timeBetweenCrates + "s between crates.");
     }
 
     @Override
@@ -135,8 +137,6 @@ public class GameMap extends Group {
         exactScoreMultiplier();
         waveFinished(delta);
     }
-
-    private float timeBetweenCrates;
 
     private void spawnCrates(float delta) {
         crateTimer -= delta;
@@ -179,10 +179,6 @@ public class GameMap extends Group {
             showLabel("5x");
             atLeast5 = true;
         }
-    }
-
-    public int getWave() {
-        return wave;
     }
 
     private void waveFinished(float delta) {
@@ -248,6 +244,10 @@ public class GameMap extends Group {
         scoreMultiplierImage.draw(batch, parentAlpha);
         if (betweenWaves.getParent() != null)
             betweenWaves.draw(batch, parentAlpha);
+    }
+
+    public int getWave() {
+        return wave;
     }
 
     public void resetScoreMultiplier() {
