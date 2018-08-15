@@ -122,9 +122,9 @@ public class GameMap extends Group {
     private void calculateValuesForWave(int wave) {
         numberOfCrates = (int) MathUtils.log2((float) Math.pow(wave, 6) * 100);
         numberOfCratesRemaining = numberOfCrates;
-        speed = 1 / MathUtils.log2((float) Math.pow(wave, 0.45f) * 2f);
-        timeBetweenCrates = 1 / MathUtils.log2((float) Math.pow(wave, 0.13) * 2) + .1f;
-        if (wave == 1) speed = .8f;
+        speed = 1 / MathUtils.log2((float) Math.pow(wave, 0.75) * 3);
+        timeBetweenCrates = 1 / MathUtils.log2((float) Math.pow(wave, 0.1) * 2);
+        if (wave == 1) speed = .7f;
         System.out.println("Wave " + wave + " : " + numberOfCrates + " crates,\t\t" + speed + " speed,\t\t" + timeBetweenCrates + "s between crates.");
     }
 
