@@ -1,4 +1,4 @@
-package ro.luca1152.typing;
+package ro.luca1152.typing.utils;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 

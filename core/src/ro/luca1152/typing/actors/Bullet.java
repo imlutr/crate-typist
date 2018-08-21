@@ -5,7 +5,6 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 
 import ro.luca1152.typing.TypingGame;
-import ro.luca1152.typing.Util;
 
 public class Bullet extends Label {
     private Rectangle collisionBox;

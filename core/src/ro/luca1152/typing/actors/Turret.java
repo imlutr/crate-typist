@@ -12,7 +12,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import ro.luca1152.typing.TypingGame;
-import ro.luca1152.typing.Util;
+import ro.luca1152.typing.utils.Util;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class Turret extends Image {
