@@ -1,20 +1,21 @@
 package ro.luca1152.typing.actors;
 
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
-import ro.luca1152.typing.TypingGame;
+import ro.luca1152.typing.MyGame;
+import ro.luca1152.typing.ui.BackgroundLabel;
 
-public class Bullet extends Label {
+public class Bullet extends BackgroundLabel {
     private Rectangle collisionBox;
     private Crate targetCrate;
 
-    private float delay;
     private boolean removeBullet = false;
 
-    Bullet(TypingGame game, char letter, float x, float y, Crate targetCrate) {
-        super(Character.toString(letter), game.getLabelStyle17bg());
+    Bullet(char letter, float x, float y, Crate targetCrate) {
+        super(Character.toString(letter), MyGame.feather.instance(AssetManager.class).get("skin/skin.json", Skin.class), "tiny", "white");
         this.targetCrate = targetCrate;
         this.setPosition(x, y);
         this.setOrigin(getWidth() / 2f, getHeight() / 2f);
@@ -26,7 +27,7 @@ public class Bullet extends Label {
     public void act(float delta) {
         super.act(delta);
         moveToTarget(delta);
-        handleCollision(delta);
+        handleCollision();
     }
 
     private void moveToTarget(float delta) {
@@ -34,7 +35,7 @@ public class Bullet extends Label {
         addAction(Actions.moveTo(targetCrate.getX() + targetCrate.getOriginX(), targetCrate.getY() + targetCrate.getOriginY(), distanceSquared * .001f * delta));
     }
 
-    private void handleCollision(float delta) {
+    private void handleCollision() {
         if (getCollisionBox().overlaps(targetCrate.getCollisionBox()) && !removeBullet) {
             targetCrate.collision();
             remove();

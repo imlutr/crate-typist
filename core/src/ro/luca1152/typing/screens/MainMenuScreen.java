@@ -1,44 +1,40 @@
 package ro.luca1152.typing.screens;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
-import ro.luca1152.typing.TypingGame;
-import ro.luca1152.typing.actors.BackgroundLabel;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
+import ro.luca1152.typing.ui.BackgroundLabel;
+import ro.luca1152.typing.ui.BaseMenuScreen;
+import ro.luca1152.typing.ui.Button;
+
+@Singleton
 public class MainMenuScreen extends BaseMenuScreen {
-    private final TypingGame game;
+    private final AssetManager manager;
+    private final PlayScreen playScreen;
+    private final Game game;
+    private Skin skin;
 
-    public MainMenuScreen(final TypingGame game) {
-        super(game);
+    @Inject
+    public MainMenuScreen(Game game,
+                          PlayScreen playScreen,
+                          Viewport viewport,
+                          Batch batch,
+                          AssetManager manager) {
+        super(viewport, batch, manager);
         this.game = game;
+        this.playScreen = playScreen;
+        this.manager = manager;
     }
 
-    @Override
-    public void show() {
-        Gdx.input.setInputProcessor(inputAdapter);
-        game.music.setLooping(true);
-        Label.LabelStyle labelStyle23bg = new Label.LabelStyle(game.getManager().get("fonts/pt_mono_23.fnt", BitmapFont.class), Color.WHITE);
-
-        Label.LabelStyle labelStyle50bg = new Label.LabelStyle(game.getManager().get("fonts/pt_mono_50.fnt", BitmapFont.class), Color.WHITE);
-        BackgroundLabel gameNameLabel = new BackgroundLabel("CRATE TYPIST", labelStyle50bg);
-        gameNameLabel.setPosition(Gdx.graphics.getWidth() / 2f - gameNameLabel.getPrefWidth() / 2f, 450);
-        gameNameLabel.setColor(Color.ORANGE);
-
-        Button playButton = new Button("play", labelStyle23bg) {
-            @Override
-            public void doSomething() {
-                game.setScreen(game.playScreen);
-            }
-        };
-        playButton.setPosition(Gdx.graphics.getWidth() / 2f - playButton.getPrefWidth() / 2f, 350f);
-
-        addActors(gameNameLabel);
-        addButtons(playButton);
-    }
 
     @Override
     public void render(float delta) {
@@ -46,5 +42,25 @@ public class MainMenuScreen extends BaseMenuScreen {
         Gdx.gl20.glClearColor(46 / 255f, 204 / 255f, 113 / 255f, 1);
         Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
         getStage().draw();
+    }
+
+    @Override
+    public void show() {
+        this.skin = manager.get("skin/skin.json", Skin.class);
+        Gdx.input.setInputProcessor(getInputAdapter());
+        BackgroundLabel gameNameLabel = new BackgroundLabel("CRATE TYPIST", skin, "large", "white");
+        gameNameLabel.setPosition(Gdx.graphics.getWidth() / 2f - gameNameLabel.getPrefWidth() / 2f, 450);
+        gameNameLabel.setColor(Color.ORANGE);
+
+        ro.luca1152.typing.ui.Button playButton = new Button("play", skin, "small", "white") {
+            @Override
+            public void doSomething() {
+                game.setScreen(playScreen);
+            }
+        };
+        playButton.setPosition(Gdx.graphics.getWidth() / 2f - playButton.getPrefWidth() / 2f, 350f);
+
+        addActors(gameNameLabel);
+        addButtons(playButton);
     }
 }

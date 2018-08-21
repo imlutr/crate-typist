@@ -1,33 +1,41 @@
 package ro.luca1152.typing.screens;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.assets.loaders.MusicLoader;
-import com.badlogic.gdx.assets.loaders.SoundLoader;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.SkinLoader;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
-import ro.luca1152.typing.TypingGame;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 
+import ro.luca1152.typing.MyGame;
+
+@Singleton
 public class LoadingScreen extends ScreenAdapter {
-    private final TypingGame game;
-    private float timer; // How much time loading the assets takes
+    private final Game game;
+    private final MainMenuScreen mainMenuScreen;
+    private final AssetManager manager;
+    private String[] wordList;
+    private float timer;
 
-    public LoadingScreen(TypingGame game) {
+    @Inject
+    public LoadingScreen(Game game,
+                         MainMenuScreen mainMenuScreen,
+                         AssetManager manager,
+                         @Named("wordList") String[] wordList) {
         this.game = game;
-    }
-
-    @Override
-    public void render(float delta) {
-        update(delta);
-        Gdx.gl20.glClearColor(46 / 255f, 204 / 255f, 113 / 255f, 11);
-        Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        this.mainMenuScreen = mainMenuScreen;
+        this.manager = manager;
+        this.wordList = wordList;
     }
 
     @Override
@@ -37,57 +45,80 @@ public class LoadingScreen extends ScreenAdapter {
 
     private void loadAssets() {
         Gdx.app.log(LoadingScreen.class.getSimpleName(), "Started loading assets.");
-        game.getManager().load("textures/wooden_crate.png", Texture.class);
-        game.getManager().load("textures/copper_crate.png", Texture.class);
-        game.getManager().load("textures/golden_crate.png", Texture.class);
-        game.getManager().load("textures/diamond_crate.png", Texture.class);
-        game.getManager().load("textures/amethyst_crate.png", Texture.class);
-        game.getManager().load("textures/turret.png", Texture.class);
-        game.getManager().load("textures/bullet.png", Texture.class);
-        game.getManager().load("textures/pixel.png", Texture.class);
-        game.getManager().load("maps/map0.png", Texture.class);
-        game.getManager().load("fonts/pt_mono_17.fnt", BitmapFont.class);
-        game.getManager().load("fonts/pt_mono_23.fnt", BitmapFont.class);
-        game.getManager().load("fonts/pt_mono_30.fnt", BitmapFont.class);
-        game.getManager().load("fonts/pt_mono_50.fnt", BitmapFont.class);
-        game.getManager().load("audio/music.mp3", Music.class);
-        game.getManager().load("audio/single_key.mp3", Sound.class);
-        game.getManager().load("audio/enter_key.wav", Sound.class);
-        game.getManager().load("audio/error.mp3", Sound.class);
-        game.getManager().load("audio/crate_breaking.wav", Sound.class);
-        game.getManager().load("audio/shutdown.mp3", Sound.class);
-        game.setWordList(Gdx.files.internal("words").readString().split("\\s+"));
+        loadSkin();
+        loadTextures();
+        loadSounds();
+        loadMusic();
+        loadWordList();
+    }
+
+    private void loadSkin() {
+        manager.load("skin/skin.atlas", TextureAtlas.class);
+        manager.load("skin/skin.json", Skin.class, new SkinLoader.SkinParameter("skin/skin.atlas"));
+    }
+
+    private void loadTextures() {
+        manager.load("textures/wooden_crate.png", Texture.class);
+        manager.load("textures/copper_crate.png", Texture.class);
+        manager.load("textures/golden_crate.png", Texture.class);
+        manager.load("textures/diamond_crate.png", Texture.class);
+        manager.load("textures/amethyst_crate.png", Texture.class);
+        manager.load("textures/turret.png", Texture.class);
+        manager.load("textures/bullet.png", Texture.class);
+        manager.load("textures/pixel.png", Texture.class);
+        manager.load("maps/map0.png", Texture.class);
+    }
+
+    private void loadSounds() {
+        manager.load("audio/single_key.mp3", Sound.class);
+        manager.load("audio/enter_key.wav", Sound.class);
+        manager.load("audio/error.mp3", Sound.class);
+        manager.load("audio/crate_breaking.wav", Sound.class);
+        manager.load("audio/shutdown.mp3", Sound.class);
+    }
+
+    private void loadMusic() {
+        manager.load("audio/music.mp3", Music.class);
+    }
+
+    private void loadWordList() {
+        MyGame.wordList = Gdx.files.internal("words").readString().split("\\s+");
+    }
+
+    @Override
+    public void render(float delta) {
+        update(delta);
+        Gdx.gl20.glClearColor(46 / 255f, 204 / 255f, 113 / 255f, 11);
+        Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
     }
 
     private void update(float delta) {
         timer += delta;
-        if (game.getManager().update()) {
-            game.getManager().get("textures/wooden_crate.png", Texture.class).setFilter(TextureFilter.Linear, TextureFilter.Linear);
-            game.getManager().get("textures/copper_crate.png", Texture.class).setFilter(TextureFilter.Linear, TextureFilter.Linear);
-            game.getManager().get("textures/golden_crate.png", Texture.class).setFilter(TextureFilter.Linear, TextureFilter.Linear);
-            game.getManager().get("textures/diamond_crate.png", Texture.class).setFilter(TextureFilter.Linear, TextureFilter.Linear);
-            game.getManager().get("textures/amethyst_crate.png", Texture.class).setFilter(TextureFilter.Linear, TextureFilter.Linear);
-            game.getManager().get("textures/turret.png", Texture.class).setFilter(TextureFilter.Linear, TextureFilter.Linear);
-            game.getManager().get("textures/bullet.png", Texture.class).setFilter(TextureFilter.Linear, TextureFilter.Linear);
-            game.getManager().get("maps/map0.png", Texture.class).setFilter(TextureFilter.Linear, TextureFilter.Linear);
-            game.getManager().get("fonts/pt_mono_17.fnt", BitmapFont.class).getData().markupEnabled = true;
-            game.setLabelStyle17bg(new Label.LabelStyle(game.getManager().get("fonts/pt_mono_17.fnt", BitmapFont.class), Color.WHITE));
-            game.labelStyle17bg2 = new Label.LabelStyle(game.getManager().get("fonts/pt_mono_17.fnt", BitmapFont.class), Color.WHITE);
-            game.getManager().get("fonts/pt_mono_23.fnt", BitmapFont.class).getData().markupEnabled = true;
-            game.getManager().get("fonts/pt_mono_30.fnt", BitmapFont.class).getData().markupEnabled = true;
-            game.setLabelStyle30(new Label.LabelStyle(game.getManager().get("fonts/pt_mono_30.fnt", BitmapFont.class), Color.WHITE));
-            game.labelStyle30bg = new Label.LabelStyle(game.getManager().get("fonts/pt_mono_30.fnt", BitmapFont.class), Color.WHITE);
-            game.music = game.getManager().get("audio/music.mp3", Music.class);
-            game.singleKeySound = game.getManager().get("audio/single_key.mp3", Sound.class);
-            game.enterKeySound = game.getManager().get("audio/enter_key.wav", Sound.class);
-            game.errorSound = game.getManager().get("audio/error.mp3", Sound.class);
-            game.crateBreakingSound = game.getManager().get("audio/crate_breaking.wav", Sound.class);
-            game.shutdownSound = game.getManager().get("audio/shutdown.mp3", Sound.class);
-
-            timer = (int) (timer * 1000) / 1000f; // Get only 3 decimal places
+        if (manager.update()) {
+            setTextureFilters();
+            enableMarkup();
+            timer = (int) (timer * 1000) / 1000f; // Get 3 decimal places
             Gdx.app.log(LoadingScreen.class.getSimpleName(), "Finished loading assets in " + timer + "s.");
-
-            game.setScreen(game.mainMenuScreen);
+            game.setScreen(mainMenuScreen);
         }
+    }
+
+    private void setTextureFilters() {
+        manager.get("textures/wooden_crate.png", Texture.class).setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        manager.get("textures/copper_crate.png", Texture.class).setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        manager.get("textures/golden_crate.png", Texture.class).setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        manager.get("textures/diamond_crate.png", Texture.class).setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        manager.get("textures/amethyst_crate.png", Texture.class).setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        manager.get("textures/turret.png", Texture.class).setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        manager.get("textures/bullet.png", Texture.class).setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        manager.get("maps/map0.png", Texture.class).setFilter(TextureFilter.Linear, TextureFilter.Linear);
+    }
+
+    private void enableMarkup() {
+        Skin skin = manager.get("skin/skin.json", Skin.class);
+        skin.getFont("tiny").getData().markupEnabled = true;
+        skin.getFont("small").getData().markupEnabled = true;
+        skin.getFont("medium").getData().markupEnabled = true;
+        skin.getFont("large").getData().markupEnabled = true;
     }
 }

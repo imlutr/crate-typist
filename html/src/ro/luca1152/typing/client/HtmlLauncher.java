@@ -4,7 +4,7 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.gwt.GwtApplication;
 import com.badlogic.gdx.backends.gwt.GwtApplicationConfiguration;
 
-import ro.luca1152.typing.TypingGame;
+import ro.luca1152.typing.MyGame;
 
 public class HtmlLauncher extends GwtApplication {
     @Override
@@ -16,6 +16,6 @@ public class HtmlLauncher extends GwtApplication {
 
     @Override
     public ApplicationListener createApplicationListener() {
-        return new TypingGame();
+        return new MyGame();
     }
 }

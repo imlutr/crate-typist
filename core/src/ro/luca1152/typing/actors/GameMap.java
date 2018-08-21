@@ -1,6 +1,8 @@
 package ro.luca1152.typing.actors;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -12,21 +14,26 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 
 import java.util.ArrayList;
 
-import ro.luca1152.typing.TypingGame;
+import javax.inject.Inject;
+
+import ro.luca1152.typing.MyGame;
+import ro.luca1152.typing.ui.BackgroundLabel;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.after;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.delay;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
+
 public class GameMap extends Group {
-    private final TypingGame game;
-    private final Color myBlue = new Color(52 / 255f, 152 / 255f, 219 / 255f, 1f);
+    private final AssetManager manager;
+    private final Skin skin;
     public int numberOfCratesRemaining;
     // Map
     private ArrayList<String> allWords = new ArrayList<String>();
@@ -56,28 +63,30 @@ public class GameMap extends Group {
     private BackgroundLabel betweenWaves;
     private float timeBetweenCrates;
 
-    public GameMap(TypingGame game, int mapId, boolean useWaves) {
-        this.game = game;
+    @Inject
+    public GameMap(int mapId, boolean useWaves) {
+        this.manager = MyGame.feather.instance(AssetManager.class);
         this.id = mapId;
         this.useWaves = useWaves;
+        this.skin = manager.get("skin/skin.json", Skin.class);
 
-        mapImage = new Image(game.getManager().get("maps/map" + mapId + ".png", Texture.class));
+        mapImage = new Image(manager.get("maps/map" + mapId + ".png", Texture.class));
         addActor(mapImage);
 
         crates = new Group();
         addActor(crates);
         bullets = new Group();
         addActor(bullets);
-        turret = new Turret(game, 284f, 284f);
+        turret = new Turret(284f, 284f);
         addActor(turret);
-        scoreMultiplierImage = new Image(game.getManager().get("textures/pixel.png", Texture.class));
+        scoreMultiplierImage = new Image(manager.get("textures/pixel.png", Texture.class));
         scoreMultiplierImage.setPosition(0f, 0f);
         scoreMultiplierImage.setHeight(10f);
-        scoreMultiplierImage.setColor(myBlue);
-        scoreMultiplierLabel = new BackgroundLabel("", game.getLabelStyle30());
+        scoreMultiplierImage.setColor(new Color(52 / 255f, 152 / 255f, 219 / 255f, 1f));
+        scoreMultiplierLabel = new BackgroundLabel("", skin, "medium", "white");
         scoreMultiplierLabel.setPosition(20, 30);
 
-        betweenWaves = new BackgroundLabel(" ", game.labelStyle30bg);
+        betweenWaves = new BackgroundLabel(" ", skin, "medium", "white");
         betweenWaves.setPosition(40 - 300, 200);
         showBetweenWavesLabel(wave);
         addActor(betweenWaves);
@@ -91,7 +100,6 @@ public class GameMap extends Group {
     private void showBetweenWavesLabel(int wave) {
         betweenWaves.setText("Wave: " + wave + "\n" + "Score: " + (int) score);
         betweenWaves.setSize(betweenWaves.getPrefWidth(), betweenWaves.getPrefHeight());
-        betweenWaves.setStyle(game.labelStyle30bg);
         betweenWaves.setPosition(40 - 300, 200);
         betweenWaves.addAction(sequence(
                 delay(.5f),
@@ -197,7 +205,7 @@ public class GameMap extends Group {
 
     private Crate newCrate(JsonValue currentMap, int randomSpawn) {
         JsonValue spawn = currentMap.get("spawns").get(randomSpawn);
-        return new Crate(game, allWords, spawn.getInt("x"), spawn.getInt("y"), speed, currentMap);
+        return new Crate(allWords, spawn.getInt("x"), spawn.getInt("y"), speed, currentMap);
     }
 
     private void addMovementActionsTo(Crate crate, int randomSpawn, JsonValue currentMap) {
@@ -251,7 +259,7 @@ public class GameMap extends Group {
     }
 
     public void resetScoreMultiplier() {
-        game.errorSound.play(.4f);
+        manager.get("audio/error.mp3", Sound.class).play(.4f);
         scoreMultiplierPercent = 0f;
         atLeast2 = atLeast3 = atLeast4 = atLeast5 = false;
     }
@@ -273,14 +281,6 @@ public class GameMap extends Group {
             return .00075f;
         else
             return .00003f;
-//        if (scoreMultiplierPercent <= .25f)
-//            return .06f;
-//        else if (scoreMultiplierPercent <= .50f)
-//            return .03f;
-//        else if (scoreMultiplierPercent <= .75f)
-//            return .03f;
-//        else
-//            return .03f;
     }
 
     public Turret getTurret() {

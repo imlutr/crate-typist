@@ -4,7 +4,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.graphics.Color;
 
-import ro.luca1152.typing.TypingGame;
+import ro.luca1152.typing.MyGame;
 
 public class DesktopLauncher {
     public static void main(String[] arg) {
@@ -14,6 +14,6 @@ public class DesktopLauncher {
         config.title = "Typing";
         config.samples = 4;
         config.initialBackgroundColor = new Color(46 / 255f, 204 / 255f, 113 / 255f, 1f);
-        new LwjglApplication(new TypingGame(), config);
+        new LwjglApplication(new MyGame(), config);
     }
 }

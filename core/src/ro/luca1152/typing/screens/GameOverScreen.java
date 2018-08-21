@@ -1,62 +1,72 @@
 package ro.luca1152.typing.screens;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
-import ro.luca1152.typing.TypingGame;
-import ro.luca1152.typing.actors.BackgroundLabel;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
+import ro.luca1152.typing.ui.BackgroundLabel;
+import ro.luca1152.typing.ui.BaseMenuScreen;
+import ro.luca1152.typing.ui.Button;
+
+@Singleton
 public class GameOverScreen extends BaseMenuScreen {
-    TypingGame game;
-    public float score;
+    private final Game game;
+    private final PlayScreen playScreen;
+    private final AssetManager manager;
+    private Skin skin;
+    public int score;
     public int wave;
 
-    public GameOverScreen(TypingGame game) {
-        super(game);
+    @Inject
+    public GameOverScreen(Game game,
+                          PlayScreen playScreen,
+                          Viewport viewport,
+                          Batch batch,
+                          AssetManager manager) {
+        super(viewport, batch, manager);
         this.game = game;
+        this.playScreen = playScreen;
+        this.manager = manager;
     }
 
     @Override
     public void show() {
         super.show();
-        game.music.stop();
-        Gdx.input.setInputProcessor(inputAdapter);
-        Label.LabelStyle labelStyle50bg = new Label.LabelStyle(game.getManager().get("fonts/pt_mono_50.fnt", BitmapFont.class), Color.WHITE);
-        Label.LabelStyle labelStyle23bg = new Label.LabelStyle(game.getManager().get("fonts/pt_mono_23.fnt", BitmapFont.class), Color.WHITE);
+        skin = manager.get("skin/skin.json", Skin.class);
+        Gdx.input.setInputProcessor(getInputAdapter());
+        manager.get("audio/music.mp3", Music.class).stop();
 
-        BackgroundLabel gameOverLabel = new BackgroundLabel("GAME OVER", labelStyle50bg);
+        BackgroundLabel gameOverLabel = new BackgroundLabel("GAME OVER", skin, "large", "white");
         gameOverLabel.setPosition(Gdx.graphics.getWidth() / 2f - gameOverLabel.getPrefWidth() / 2f, 450);
         gameOverLabel.setColor(Color.ORANGE);
 
-        BackgroundLabel scoreLabel = new BackgroundLabel("Score: [WHITE]" + (int)(score-3) + "[]", labelStyle23bg);
+        BackgroundLabel scoreLabel = new BackgroundLabel("Score: [WHITE]" + score + "[]", skin, "small", "white");
         scoreLabel.setPosition(gameOverLabel.getX(), gameOverLabel.getY() - gameOverLabel.getPrefHeight() + 10);
         scoreLabel.setColor(Color.ORANGE);
 
-        BackgroundLabel waveLabel = new BackgroundLabel("Wave: [WHITE]" + wave + "[]", labelStyle23bg);
+        BackgroundLabel waveLabel = new BackgroundLabel("Wave: [WHITE]" + wave + "[]", skin, "small", "white");
         waveLabel.setPosition(gameOverLabel.getX(), scoreLabel.getY() - scoreLabel.getPrefHeight() - 20);
         waveLabel.setColor(Color.ORANGE);
 
-        Button playButton = new Button("retry", labelStyle23bg) {
+        ro.luca1152.typing.ui.Button playButton = new Button("retry", skin, "small", "white") {
             @Override
             public void doSomething() {
-                game.setScreen(game.playScreen);
+                game.setScreen(playScreen);
             }
         };
         playButton.setPosition(Gdx.graphics.getWidth() / 2f - playButton.getPrefWidth() / 2f, 250f);
 
-        Button menuButton = new Button("menu", labelStyle23bg) {
-            @Override
-            public void doSomething() {
-                game.setScreen(game.mainMenuScreen);
-            }
-        };
-        menuButton.setPosition(Gdx.graphics.getWidth() / 2f - menuButton.getPrefWidth() / 2f, playButton.getY() - playButton.getPrefHeight() - 20);
-
         addActors(gameOverLabel, scoreLabel, waveLabel);
-        addButtons(playButton, menuButton);
+        addButtons(playButton);
     }
 
     @Override
