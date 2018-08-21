@@ -72,7 +72,7 @@ project(":core") {
 
     dependencies {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
-        
+        compile group: 'com.google.inject', name: 'guice', version: '4.0'
     }
 }
 
