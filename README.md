@@ -1,5 +1,5 @@
 # Crate Typist
-A 2D typing game with tower defense elements I made for [Ludum Dare 42](https://ldjam.com/events/ludum-dare/42/crate-typist) in 72 hours, where it took place #390/3065. You can play it [here](https://luca1152.itch.io/crate-typist).
+A 2D typing game with tower defense elements, made for [Ludum Dare 42](https://ldjam.com/events/ludum-dare/42/crate-typist) in 72 hours, where it took place #390/3065 overall, and the 56<sup>th</sup> most fun game. You can play it [here](https://luca1152.itch.io/crate-typist).
 
 ## Getting started
 ### Running the game
