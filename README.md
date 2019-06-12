@@ -1,5 +1,5 @@
 # Crate Typist
-A 2D typing game written in Java & libGDX for [Ludum Dare 42](https://ldjam.com/events/ludum-dare/42/crate-typist) in 72 hours, where it placed #390/3065 overall, and the 56<sup>th</sup> most fun game. You can play it [here](https://luca1152.itch.io/crate-typist).
+A 2D typing game written in Java & libGDX for [Ludum Dare 42](https://ldjam.com/events/ludum-dare/42/crate-typist) in 72 hours, where it placed #390/3065 overall, being the 56<sup>th</sup> most fun game. You can play the game [here](https://luca1152.itch.io/crate-typist).
 
 <img src="https://i.imgur.com/M93PqHQ.gif" width=450px>
 
